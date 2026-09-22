@@ -43,13 +43,37 @@ export default function AllUsersPage() {
     }
   };
 
+  const [isExporting, setIsExporting] = useState(false);
+  const token = useSelector((state) => state.auth.token);
+
+  const fetchAllUsersForExport = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/users?limit=1000000`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.error("Failed to fetch all users for export", error);
+      return [];
+    }
+  };
+
   // Export to Excel
-  const exportToExcel = () => {
-    if (users.length === 0) return;
+  const exportToExcel = async () => {
+    setIsExporting(true);
+    const allUsers = await fetchAllUsersForExport();
+    
+    if (allUsers.length === 0) {
+      setIsExporting(false);
+      return;
+    }
 
     // Group users by Pathak
-    const usersByPathak = users.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || 'Unassigned';
+    const usersByPathak = allUsers.reduce((acc, user) => {
+      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
       if (!acc[PathakName]) {
         acc[PathakName] = [];
       }
@@ -84,11 +108,18 @@ export default function AllUsersPage() {
     });
 
     XLSX.writeFile(workbook, 'WorldRecord_Users_Grouped.xlsx');
+    setIsExporting(false);
   };
 
   // Export to PDF
-  const exportToPDF = () => {
-    if (users.length === 0) return;
+  const exportToPDF = async () => {
+    setIsExporting(true);
+    const allUsers = await fetchAllUsersForExport();
+
+    if (allUsers.length === 0) {
+      setIsExporting(false);
+      return;
+    }
 
     const doc = new jsPDF('landscape');
 
@@ -99,28 +130,46 @@ export default function AllUsersPage() {
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
 
     // Table Data
-    const tableColumn = ["S.No", "Full Name", "Phone", "DOB", "Gender", "B.Group", "Pathak", "Registered"];
-    const tableRows = users.map((user, index) => [
-      (page - 1) * limit + index + 1,
-      user.fullName,
-      user.phone,
-      user.dob || 'N/A',
-      user.gender || 'N/A',
-      user.bloodGroup || 'N/A',
-      user.Pathak?.name || 'N/A',
-      new Date(user.createdAt).toLocaleDateString(),
-    ]);
+    const tableColumn = ["S.No", "Full Name", "Email", "Phone", "DOB", "Gender", "B.Group", "Address", "Registered"];
+    // Group users by Pathak for PDF
+    const usersByPathak = allUsers.reduce((acc, user) => {
+      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
+      if (!acc[PathakName]) acc[PathakName] = [];
+      acc[PathakName].push(user);
+      return acc;
+    }, {});
 
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 28,
-      theme: 'grid',
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [4, 110, 202] }
+    Object.keys(usersByPathak).forEach((PathakName, index) => {
+      if (index > 0) doc.addPage();
+      
+      doc.setFontSize(14);
+      doc.text(`Organization: ${PathakName}`, 14, 30);
+      
+      const PathakUsers = usersByPathak[PathakName];
+      const tableRows = PathakUsers.map((user, i) => [
+        i + 1,
+        user.fullName,
+        user.email,
+        user.phone,
+        user.dob || 'N/A',
+        user.gender || 'N/A',
+        user.bloodGroup || 'N/A',
+        user.address || 'N/A',
+        new Date(user.createdAt).toLocaleDateString(),
+      ]);
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 35,
+        theme: 'grid',
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [4, 110, 202] }
+      });
     });
 
-    doc.save('WorldRecord_Users.pdf');
+    doc.save('WorldRecord_Users_Grouped.pdf');
+    setIsExporting(false);
   };
 
   return (
@@ -142,7 +191,7 @@ export default function AllUsersPage() {
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-primary text-primary-content shadow-md shadow-primary/20 cursor-pointer gap-2">
               <HiOutlineDownload className="w-5 h-5" />
-              Export Data
+              {isExporting ? 'Exporting...' : 'Export Data'}
             </label>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-2 border border-base-content/10">
               <li><button onClick={exportToExcel}><HiOutlineDocumentText className="w-4 h-4" /> Excel (.xlsx)</button></li>
