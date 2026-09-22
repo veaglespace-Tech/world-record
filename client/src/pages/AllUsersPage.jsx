@@ -99,6 +99,8 @@ export default function AllUsersPage() {
         'Aadhar No': user.aadharNo || 'N/A',
         'Address': user.address || 'N/A',
         'Organization (Pathak)': PathakName,
+        'Passport Photo': user.passportPhoto ? `${API_URL.replace('/api', '')}${user.passportPhoto}` : 'N/A',
+        'Aadhar Card': user.aadharImage ? `${API_URL.replace('/api', '')}${user.aadharImage}` : 'N/A',
         'Registered Date': new Date(user.createdAt).toLocaleDateString(),
       }));
 
@@ -131,10 +133,10 @@ export default function AllUsersPage() {
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
 
     // Table Data
-    const tableColumn = ["S.No", "Full Name", "Email", "Phone", "DOB", "Gender", "B.Group", "Address", "Registered"];
+    const tableColumn = ["S.No", "Full Name", "Email", "Phone", "DOB", "Gender", "Passport", "Aadhar", "Registered"];
     // Group users by Pathak for PDF
     const usersByPathak = allUsers.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || user.Pathak?.name || 'Unassigned';
+      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
       if (!acc[PathakName]) acc[PathakName] = [];
       acc[PathakName].push(user);
       return acc;
@@ -154,8 +156,8 @@ export default function AllUsersPage() {
         user.phone,
         user.dob || 'N/A',
         user.gender || 'N/A',
-        user.bloodGroup || 'N/A',
-        user.address || 'N/A',
+        user.passportPhoto ? 'Yes (Link in Excel)' : 'No',
+        user.aadharImage ? 'Yes (Link in Excel)' : 'No',
         new Date(user.createdAt).toLocaleDateString(),
       ]);
 

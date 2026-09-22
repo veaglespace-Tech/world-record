@@ -141,7 +141,7 @@ export default function UserRegistrationPage() {
                             {isLoadingPathak ? 'Loading Pathak...' : '-- Select Your Pathak --'}
                           </option>
                           {pathakList.map((p) => (
-                            <option key={p.id} value={p.id}>{p.name}</option>
+                            <option key={p.id} value={p.id}>{String(p.id).padStart(2, '0')} - {p.name}</option>
                           ))}
                         </select>
                       </label>
