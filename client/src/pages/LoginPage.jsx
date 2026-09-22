@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../store/api/apiSlice';
 import { setCredentials } from '../store/slices/authSlice';
@@ -70,14 +70,14 @@ export default function LoginPage() {
 
       <div className="flex-1 flex flex-col items-center justify-center p-4 py-8 relative z-10 w-full">
         <div className="card w-full max-w-md bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5">
-          <div className="card-body p-6 sm:p-8">
+          <div className="card-body px-6 pt-6 pb-5 sm:px-8 sm:pt-8 sm:pb-6">
           {/* Logo & Title */}
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary mb-4 shadow-lg shadow-primary/25">
               <HiOutlineGlobe className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Guinness World Records
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate pb-1">
+              Guinness Book of World Record
             </h1>
             <p className="text-base-content/50 text-sm mt-2">Admin Portal — Sign in to continue</p>
           </div>
@@ -93,12 +93,12 @@ export default function LoginPage() {
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Email Address</span>
+              <label className="label py-1">
+                <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Email Address</span>
               </label>
-              <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20">
+              <label className="input input-bordered w-full flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20">
                 <HiOutlineMail className="w-5 h-5 text-base-content/40" />
                 <input
                   type="email"
@@ -114,10 +114,10 @@ export default function LoginPage() {
             </div>
 
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Password</span>
+              <label className="label py-1">
+                <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Password</span>
               </label>
-              <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+              <label className="input input-bordered w-full flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
                 <HiOutlineLockClosed className="w-5 h-5 text-base-content/40" />
                 <input
                   type={showPassword ? "text" : "password"}
@@ -135,41 +135,44 @@ export default function LoginPage() {
                   {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
                 </button>
               </label>
+              <label className="label justify-end pb-0">
+                <Link to="/forgot-password" className="label-text-alt link link-primary font-medium">
+                  Forgot Password?
+                </Link>
+              </label>
             </div>
 
             {/* Math Captcha */}
             <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Security Check</span>
+              <label className="label py-1">
+                <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Security Check</span>
               </label>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="bg-base-200/80 px-4 py-2 rounded-lg font-mono font-bold text-lg tracking-widest border border-base-content/10 shadow-inner select-none flex-1 text-center text-base-content/80">
-                    {captchaText}
-                  </div>
-                  <button 
-                    type="button" 
-                    onClick={generateCaptcha}
-                    className="btn btn-square btn-outline btn-sm"
-                    title="Reload Captcha"
-                  >
-                    <HiOutlineRefresh className="w-4 h-4" />
-                  </button>
+              <div className="flex items-center gap-2">
+                <div className="bg-base-200/80 h-12 flex items-center justify-center px-4 rounded-lg font-mono font-bold tracking-widest border border-base-content/10 shadow-inner select-none flex-none text-center text-base-content/80">
+                  {captchaText}
                 </div>
                 <input
                   type="text"
-                  className="input input-bordered w-full focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 font-mono text-center"
-                  placeholder="Enter answer"
+                  className="input input-bordered w-full focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 font-mono text-center grow"
+                  placeholder="Answer"
                   value={userCaptcha}
                   onChange={(e) => setUserCaptcha(e.target.value)}
                   required
                 />
+                <button 
+                  type="button" 
+                  onClick={generateCaptcha}
+                  className="btn btn-square btn-outline border-base-content/20 hover:bg-base-200 hover:text-base-content flex-none h-12 w-12"
+                  title="Reload Captcha"
+                >
+                  <HiOutlineRefresh className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
             <button
               type="submit"
-              className={`btn btn-primary w-full mt-6 text-base font-semibold shadow-lg shadow-primary/25 ${isLoading ? 'loading' : ''}`}
+              className={`btn btn-primary w-full mt-4 text-base font-semibold shadow-lg shadow-primary/25 ${isLoading ? 'loading' : ''}`}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -180,12 +183,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="text-center mt-6">
-            <p className="text-xs text-base-content/40">
-              Secured with JWT Authentication
-            </p>
-          </div>
+
         </div>
       </div>
     </div>

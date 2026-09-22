@@ -52,7 +52,7 @@ export default function UserRegistrationPage() {
     setError('');
 
     // Basic Validation
-    if (!formData.patakId) return setError('Please select a Patak (Organization).');
+    if (!formData.patakId) return setError('Please Select a pathak (Organization).');
     if (!files.aadharImage || !files.passportPhoto) return setError('Both Aadhar image and Passport photo are required.');
     
     // Prepare FormData for file upload
@@ -105,32 +105,40 @@ export default function UserRegistrationPage() {
               transition={{ duration: 0.3 }}
               className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5"
             >
-              <div className="card-body p-6 md:p-8">
+              <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
+                {/* Header inside card */}
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
+                    Pathak Member Registration
+                  </h2>
+                  <p className="text-sm text-base-content/50 mt-1">Please fill in your details accurately.</p>
+                </div>
+
                 {error && (
-                  <div className="alert alert-error mb-6 rounded-lg text-sm">
+                  <div className="alert alert-error mb-4 rounded-lg text-sm shadow-sm py-2">
                     <span>{error}</span>
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   {/* Organization Details */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-base-200 pb-2">Organization Details</h3>
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold border-b border-base-200 pb-2 text-primary uppercase tracking-wider">Organization Details</h3>
                     <div className="form-control">
-                      <label className="label">
-                        <span className="label-text font-medium">Select Patak (Organization) *</span>
+                      <label className="label py-1">
+                        <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Select Pathak (Organization) *</span>
                       </label>
                       <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                         <HiOutlineOfficeBuilding className="w-5 h-5 text-base-content/40" />
                         <select
                           name="patakId"
-                          className="grow bg-transparent outline-none"
+                          className="grow bg-transparent outline-none cursor-pointer"
                           value={formData.patakId}
                           onChange={handleChange}
                           required
                         >
                           <option value="" disabled>
-                            {isLoadingPataks ? 'Loading Pataks...' : '-- Select Your Patak --'}
+                            {isLoadingPataks ? 'Loading Pataks...' : '-- Select Your Pathak --'}
                           </option>
                           {pataks.map((p) => (
                             <option key={p.id} value={p.id}>{p.name}</option>
@@ -141,12 +149,12 @@ export default function UserRegistrationPage() {
                   </div>
 
                   {/* Personal Details */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-base-200 pb-2 mt-4">Personal Details</h3>
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold border-b border-base-200 pb-2 mt-4 text-primary uppercase tracking-wider">Personal Details</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Full Name *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Full Name *</span>
                         </label>
                         <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                           <HiOutlineUser className="w-5 h-5 text-base-content/40" />
@@ -155,8 +163,8 @@ export default function UserRegistrationPage() {
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Email Address *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Email Address *</span>
                         </label>
                         <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                           <HiOutlineMail className="w-5 h-5 text-base-content/40" />
@@ -175,8 +183,8 @@ export default function UserRegistrationPage() {
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Contact Number *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Contact Number *</span>
                         </label>
                         <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                           <HiOutlinePhone className="w-5 h-5 text-base-content/40" />
@@ -185,116 +193,120 @@ export default function UserRegistrationPage() {
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Date of Birth *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Date of Birth *</span>
                         </label>
                         <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                           <HiOutlineCalendar className="w-5 h-5 text-base-content/40" />
-                          <input type="date" name="dob" className="grow" value={formData.dob} onChange={handleChange} required />
+                          <input type="date" name="dob" className="grow text-base-content/80 uppercase" value={formData.dob} onChange={handleChange} required />
                         </label>
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Gender *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Gender *</span>
                         </label>
-                        <div className="flex gap-4 mt-2">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="Male" className="radio radio-primary radio-sm" onChange={handleChange} required />
-                            <span>Male</span>
+                        <div className="flex bg-base-100 border border-base-content/20 rounded-lg h-12 items-center px-4 gap-6 shadow-sm">
+                          <label className="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="gender" value="Male" className="radio radio-primary radio-sm group-hover:border-primary" onChange={handleChange} required />
+                            <span className="text-sm font-medium">Male</span>
                           </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="Female" className="radio radio-primary radio-sm" onChange={handleChange} required />
-                            <span>Female</span>
+                          <label className="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="gender" value="Female" className="radio radio-primary radio-sm group-hover:border-primary" onChange={handleChange} required />
+                            <span className="text-sm font-medium">Female</span>
                           </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="gender" value="Other" className="radio radio-primary radio-sm" onChange={handleChange} required />
-                            <span>Other</span>
+                          <label className="flex items-center gap-2 cursor-pointer group">
+                            <input type="radio" name="gender" value="Other" className="radio radio-primary radio-sm group-hover:border-primary" onChange={handleChange} required />
+                            <span className="text-sm font-medium">Other</span>
                           </label>
                         </div>
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Blood Group *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Blood Group *</span>
                         </label>
-                        <select name="bloodGroup" className="select select-bordered focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full" value={formData.bloodGroup} onChange={handleChange} required>
-                          <option value="" disabled>Select Blood Group</option>
-                          {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
-                            <option key={bg} value={bg}>{bg}</option>
-                          ))}
-                        </select>
+                        <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full pr-0">
+                          <div className="w-5 h-5 rounded-full bg-error/10 text-error flex items-center justify-center font-bold text-[10px]">AB</div>
+                          <select name="bloodGroup" className="grow bg-transparent outline-none cursor-pointer" value={formData.bloodGroup} onChange={handleChange} required>
+                            <option value="" disabled>Select Group</option>
+                            {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
+                              <option key={bg} value={bg}>{bg}</option>
+                            ))}
+                          </select>
+                        </label>
                       </div>
                       
                       <div className="form-control md:col-span-2">
-                        <label className="label">
-                          <span className="label-text font-medium">Address *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Address *</span>
                         </label>
                         <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                           <HiOutlineLocationMarker className="w-5 h-5 text-base-content/40" />
-                          <input type="text" name="address" className="grow" placeholder="Full Address" value={formData.address} onChange={handleChange} required />
+                          <input type="text" name="address" className="grow" placeholder="Full residential address" value={formData.address} onChange={handleChange} required />
                         </label>
                       </div>
                     </div>
                   </div>
 
                   {/* Identity & Documents */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold border-b border-base-200 pb-2 mt-4">Identity & Documents</h3>
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-bold border-b border-base-200 pb-2 mt-4 text-primary uppercase tracking-wider">Identity & Documents</h3>
                     
                     <div className="form-control">
-                      <label className="label">
-                        <span className="label-text font-medium">Aadhar Card Number *</span>
+                      <label className="label py-1">
+                        <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Aadhar Card Number *</span>
                       </label>
                       <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                         <HiOutlineIdentification className="w-5 h-5 text-base-content/40" />
-                        <input type="text" name="aadharNo" className="grow" placeholder="1234 5678 9012" value={formData.aadharNo} onChange={handleChange} required minLength={12} maxLength={12} />
-                      </label>
-                      <label className="label pb-0">
-                        <span className="label-text-alt text-base-content/60">Enter 12-digit Aadhar number without spaces</span>
+                        <input type="text" name="aadharNo" className="grow font-mono tracking-widest" placeholder="123456789012" value={formData.aadharNo} onChange={handleChange} required minLength={12} maxLength={12} />
                       </label>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Upload Aadhar Card *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Aadhar Document *</span>
                         </label>
-                        <input 
-                          type="file" 
-                          name="aadharImage"
-                          accept="image/*,.pdf"
-                          onChange={handleFileChange}
-                          className="file-input file-input-bordered file-input-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full" 
-                          required 
-                        />
+                        <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full p-0 overflow-hidden">
+                          <input 
+                            type="file" 
+                            name="aadharImage"
+                            accept="image/*,.pdf"
+                            onChange={handleFileChange}
+                            className="file-input file-input-ghost w-full h-full text-sm outline-none" 
+                            required 
+                          />
+                        </label>
                       </div>
 
                       <div className="form-control">
-                        <label className="label">
-                          <span className="label-text font-medium">Upload Passport Photo *</span>
+                        <label className="label py-1">
+                          <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Passport Photo *</span>
                         </label>
-                        <input 
-                          type="file" 
-                          name="passportPhoto"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="file-input file-input-bordered file-input-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full" 
-                          required 
-                        />
+                        <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full p-0 overflow-hidden">
+                          <input 
+                            type="file" 
+                            name="passportPhoto"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="file-input file-input-ghost w-full h-full text-sm outline-none" 
+                            required 
+                          />
+                        </label>
                       </div>
                     </div>
                   </div>
 
-                  <div className="pt-4">
+                  <div className="pt-2">
                     <button
                       type="submit"
-                      className="btn btn-success text-white w-full"
+                      className={`btn bg-gradient-to-r from-primary to-secondary text-white border-0 hover:shadow-lg hover:shadow-primary/30 w-full mt-2 text-base font-semibold shadow-md transition-all ${isLoading ? 'loading' : ''}`}
                       disabled={isLoading}
                     >
                       {isLoading ? (
                         <>
-                          <span className="loading loading-spinner"></span>
+                          <span className="loading loading-spinner loading-sm"></span>
                           Submitting...
                         </>
                       ) : (

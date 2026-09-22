@@ -93,7 +93,7 @@ export default function AllPataksPage() {
             <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
               <HiOutlineOfficeBuilding className="w-5 h-5 text-success" />
             </div>
-            All Pataks
+            All Pathaks
           </h2>
           <p className="text-base-content/60 mt-1 ml-13">
             Showing {pataks.length} of {total} total organization{total !== 1 ? 's' : ''}
@@ -119,7 +119,7 @@ export default function AllPataksPage() {
         <div className="card bg-base-100 border border-primary/20 shadow-sm">
           <div className="card-body">
             <h3 className="font-semibold mb-3">
-              {editingId ? 'Edit Patak / Organization' : 'Add New Patak / Organization'}
+              {editingId ? 'Edit Pathak / Organization' : 'Add New Pathak / Organization'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="form-control">
@@ -179,7 +179,7 @@ export default function AllPataksPage() {
           <input
             type="text"
             className="grow"
-            placeholder="Search pataks..."
+            placeholder="Search pathaks..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -198,7 +198,7 @@ export default function AllPataksPage() {
         ) : pataks.length === 0 ? (
           <div className="text-center py-16 text-base-content/40">
             <HiOutlineOfficeBuilding className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-lg font-medium">No pataks found</p>
+            <p className="text-lg font-medium">No pathaks found</p>
             <p className="text-sm mt-1">
               {debouncedSearch ? 'Try adjusting your search' : 'Click "Add Patak" to create one'}
             </p>

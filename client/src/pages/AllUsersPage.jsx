@@ -76,7 +76,7 @@ export default function AllUsersPage() {
     
     // Header
     doc.setFontSize(16);
-    doc.text('Guinness World Records - Users Report', 14, 15);
+    doc.text('Guinness Book of World Record - Users Report', 14, 15);
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
 

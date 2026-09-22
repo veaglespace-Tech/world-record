@@ -44,7 +44,7 @@ function DashboardHome() {
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-base-content/50 font-medium">Total Pataks</p>
+                <p className="text-sm text-base-content/50 font-medium">Total Pathaks</p>
                 <p className="text-3xl font-bold mt-1">
                   {loading ? <span className="loading loading-spinner loading-sm"></span> : pataks.length}
                 </p>
@@ -97,7 +97,7 @@ export default function DashboardPage() {
           <div className="flex-1 px-2 mx-2 font-bold text-lg flex items-center gap-2">
             <span>🌍</span>
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate">
-              Guinness World Records
+              Guinness Book of World Record
             </span>
           </div>
         </div>
