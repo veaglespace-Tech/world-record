@@ -114,6 +114,7 @@ export default function AllPathakPage() {
     if (pathakList.length === 0) return;
     const exportData = pathakList.map((p, index) => ({
       'S.No': index + 1,
+      'Logo URL': p.logoUrl || 'N/A',
       'Organization Name': p.name,
       'Description': p.description || 'N/A',
       'Admin Name': p.adminName || 'N/A',
