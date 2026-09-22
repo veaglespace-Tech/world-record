@@ -1,0 +1,64 @@
+name: Deploy Client & Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          timeout: 160s
+          command_timeout: 18m
+
+          script: |
+            set -e
+
+            cd /root/world-record
+
+            echo "================================"
+            echo "Pulling latest code..."
+            echo "================================"
+
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "================================"
+            echo "Deploying frontend..."
+            echo "================================"
+
+            cd /root/world-record/client
+
+            npm install
+            npm run build
+
+            echo "Restarting frontend..."
+            pm2 restart world-record-client
+
+            echo "================================"
+            echo "Deploying backend..."
+            echo "================================"
+
+            cd /root/world-record/server
+
+            npm install
+
+            echo " Prisma client..."
+            npx prisma migrate
+            npx prisma db push
+
+            echo "Restarting backend..."
+            pm2 restart world-record-server
+
+            echo "================================"
+            echo "Deployment successful!"
+            echo "================================"
