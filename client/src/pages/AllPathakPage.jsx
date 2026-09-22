@@ -398,7 +398,7 @@ export default function AllPathakPage() {
                         )}
                       </td>
                       <td>
-                        <div className="font-semibold">{String(pathakData.id).padStart(2, '0')} - {pathakData.name}</div>
+                        <div className="font-semibold">{String((page - 1) * limit + index + 1).padStart(2, '0')} - {pathakData.name}</div>
                         {pathakData.description && (
                           <div className="text-xs text-base-content/50 max-w-[180px] truncate" title={pathakData.description}>
                             {pathakData.description}
