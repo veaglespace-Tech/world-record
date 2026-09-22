@@ -83,12 +83,12 @@ export default function UserRegistrationPage() {
         <img 
           src="/dhol-player.jpg" 
           alt="Dhol Player Left" 
-          className="absolute -left-[10%] md:-left-[5%] top-[2%] md:top-[5%] h-[70vh] md:h-[85vh] object-contain mix-blend-multiply opacity-70" 
+          className="absolute object-contain mix-blend-multiply transition-all duration-500 opacity-40 sm:opacity-50 md:opacity-60 lg:opacity-70 w-[55vw] h-auto -left-[10vw] top-[2%] sm:w-[50vw] sm:-left-[15vw] sm:top-[5%] md:w-[45vw] md:-left-[15vw] md:top-[10%] lg:w-auto lg:h-[85vh] lg:-left-[5%] lg:top-[5%]" 
         />
         <img 
           src="/dhol-player.jpg" 
           alt="Dhol Player Right" 
-          className="absolute -right-[10%] md:-right-[5%] top-[2%] md:top-[5%] h-[70vh] md:h-[85vh] object-contain mix-blend-multiply opacity-70 transform scale-x-[-1]" 
+          className="absolute object-contain mix-blend-multiply transform scale-x-[-1] transition-all duration-500 opacity-40 sm:opacity-50 md:opacity-60 lg:opacity-70 w-[55vw] h-auto -right-[10vw] top-[2%] sm:w-[50vw] sm:-right-[15vw] sm:top-[5%] md:w-[45vw] md:-right-[15vw] md:top-[10%] lg:w-auto lg:h-[85vh] lg:-right-[5%] lg:top-[5%]" 
         />
       </div>
 
