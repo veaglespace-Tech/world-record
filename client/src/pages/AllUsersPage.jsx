@@ -228,7 +228,7 @@ export default function AllUsersPage() {
 
         <div className="w-full sm:w-auto min-w-[200px]">
           <select
-            className="select select-bordered bg-base-200/40 text-base-content/70 cursor-pointer w-full"
+            className="select select-bordered bg-base-100 text-base-content/70 cursor-pointer w-full"
             value={filter}
             onChange={(e) => {
               setFilter(e.target.value);
