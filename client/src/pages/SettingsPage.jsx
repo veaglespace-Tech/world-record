@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentUser, setCredentials, selectCurrentToken } from '../store/slices/authSlice';
 import { useUpdateSettingsMutation } from '../store/api/apiSlice';
-import { HiOutlineCog, HiOutlineUser, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
+import { HiOutlineCog, HiOutlineUser, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiOutlineMail, HiOutlineShieldCheck, HiOutlineCheckCircle } from 'react-icons/hi';
 
 export default function SettingsPage() {
   const admin = useSelector(selectCurrentUser);
@@ -57,23 +57,30 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-3xl">
       {/* Header */}
-      <div>
-        <h2 className="text-2xl font-bold flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
-            <HiOutlineCog className="w-5 h-5 text-warning" />
+      <div className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5">
+        <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-warning to-amber-500 flex items-center justify-center shadow-lg shadow-warning/25">
+              <HiOutlineCog className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
+                Settings
+              </h2>
+              <p className="text-sm text-base-content/50">
+                Manage your profile and security settings.
+              </p>
+            </div>
           </div>
-          Settings
-        </h2>
-        <p className="text-base-content/60 mt-2 ml-13">
-          Manage your profile and security settings.
-        </p>
+        </div>
       </div>
 
       {/* Message */}
       {message.text && (
-        <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'} text-sm`}>
+        <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-error'} text-sm shadow-sm`}>
+          <HiOutlineCheckCircle className="w-5 h-5" />
           <span>{message.text}</span>
         </div>
       )}
@@ -82,34 +89,45 @@ export default function SettingsPage() {
         {/* Profile Section */}
         <div className="card bg-base-100 border border-base-content/5 shadow-sm">
           <div className="card-body">
-            <h3 className="font-semibold flex items-center gap-2 mb-4">
-              <HiOutlineUser className="w-5 h-5" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-base-content/60 flex items-center gap-2 mb-5 pb-3 border-b border-base-200">
+              <HiOutlineUser className="w-5 h-5 text-primary" />
               Profile Information
             </h3>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Name</span>
-              </label>
-              <input
-                type="text"
-                className="input input-bordered focus:input-primary"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="form-control mt-3">
-              <label className="label">
-                <span className="label-text font-medium">Email</span>
-              </label>
-              <input
-                type="email"
-                className="input input-bordered"
-                value={admin?.email || ''}
-                disabled
-              />
-              <label className="label">
-                <span className="label-text-alt text-base-content/40">Email cannot be changed</span>
-              </label>
+            
+            <div className="space-y-4">
+              <div className="form-control">
+                <label className="label py-1">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Full Name</span>
+                </label>
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+                  <HiOutlineUser className="w-5 h-5 text-base-content/40" />
+                  <input
+                    type="text"
+                    className="grow bg-transparent outline-none"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="form-control">
+                <label className="label py-1">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Email Address</span>
+                </label>
+                <label className="input input-bordered flex items-center gap-3 shadow-sm bg-base-200/50 border-base-content/10 w-full cursor-not-allowed opacity-70">
+                  <HiOutlineMail className="w-5 h-5 text-base-content/40" />
+                  <input
+                    type="email"
+                    className="grow bg-transparent outline-none cursor-not-allowed"
+                    value={admin?.email || ''}
+                    disabled
+                  />
+                </label>
+                <label className="label py-1">
+                  <span className="label-text-alt text-base-content/40 italic text-xs">Email cannot be changed</span>
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -117,19 +135,22 @@ export default function SettingsPage() {
         {/* Password Section */}
         <div className="card bg-base-100 border border-base-content/5 shadow-sm">
           <div className="card-body">
-            <h3 className="font-semibold flex items-center gap-2 mb-4">
-              <HiOutlineLockClosed className="w-5 h-5" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-base-content/60 flex items-center gap-2 mb-5 pb-3 border-b border-base-200">
+              <HiOutlineShieldCheck className="w-5 h-5 text-warning" />
               Change Password
             </h3>
-            <div className="space-y-3">
+            
+            <div className="space-y-4">
+              {/* Current Password */}
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Current Password</span>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Current Password</span>
                 </label>
-                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full relative">
+                  <HiOutlineLockClosed className="w-5 h-5 text-base-content/40" />
                   <input
                     type={showPasswords.current ? "text" : "password"}
-                    className="grow pr-10"
+                    className="grow pr-10 bg-transparent outline-none"
                     placeholder="Enter current password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
@@ -143,14 +164,17 @@ export default function SettingsPage() {
                   </button>
                 </label>
               </div>
+
+              {/* New Password */}
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">New Password</span>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">New Password</span>
                 </label>
-                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full relative">
+                  <HiOutlineLockClosed className="w-5 h-5 text-base-content/40" />
                   <input
                     type={showPasswords.new ? "text" : "password"}
-                    className="grow pr-10"
+                    className="grow pr-10 bg-transparent outline-none"
                     placeholder="Enter new password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -164,14 +188,17 @@ export default function SettingsPage() {
                   </button>
                 </label>
               </div>
+
+              {/* Confirm Password */}
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Confirm New Password</span>
+                <label className="label py-1">
+                  <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Confirm New Password</span>
                 </label>
-                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full relative">
+                  <HiOutlineLockClosed className="w-5 h-5 text-base-content/40" />
                   <input
                     type={showPasswords.confirm ? "text" : "password"}
-                    className="grow pr-10"
+                    className="grow pr-10 bg-transparent outline-none"
                     placeholder="Re-enter new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -189,9 +216,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
-          className="btn btn-primary"
+          className="btn btn-primary text-primary-content shadow-md shadow-primary/20 w-full sm:w-auto px-8"
           disabled={isLoading}
         >
           {isLoading ? (
