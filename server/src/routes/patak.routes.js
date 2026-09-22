@@ -1,48 +1,75 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('../middleware/auth');
+const multer = require('multer');
+const ImageKit = require('@imagekit/nodejs');
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// GET /api/pataks/public — Public route (for registration dropdown)
+// ImageKit configuration
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
+
+// Multer memory storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+// GET /api/Pathaks/public — Public route (for registration dropdown)
 router.get('/public', async (req, res) => {
   try {
-    const pataks = await prisma.patak.findMany({
+    const Pathaks = await prisma.Pathak.findMany({
       select: { id: true, name: true },
       orderBy: { name: 'asc' },
     });
-    res.json(pataks);
+    res.json(Pathaks);
   } catch (error) {
-    console.error('Get public pataks error:', error);
+    console.error('Get public Pathaks error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// POST /api/pataks — Protected
-router.post('/', authMiddleware, async (req, res) => {
+// POST /api/Pathaks — Protected (with logo upload)
+router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, adminName, adminEmail, address } = req.body;
 
     if (!name) {
-      return res.status(400).json({ error: 'Patak name is required.' });
+      return res.status(400).json({ error: 'Pathak name is required.' });
     }
 
-    const patak = await prisma.patak.create({
+    let logoUrl = null;
+
+    if (req.file) {
+      const uploaded = await imagekit.upload({
+        file: req.file.buffer,
+        fileName: `Pathak-logo-${Date.now()}-${req.file.originalname}`,
+        folder: '/Pathak-logos',
+      });
+      logoUrl = uploaded.url;
+    }
+
+    const Pathak = await prisma.Pathak.create({
       data: {
         name,
         description: description || null,
+        adminName: adminName || null,
+        adminEmail: adminEmail || null,
+        address: address || null,
+        logoUrl,
       },
     });
 
-    res.status(201).json(patak);
+    res.status(201).json(Pathak);
   } catch (error) {
-    console.error('Create patak error:', error);
+    console.error('Create Pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// GET /api/pataks — Protected
+// GET /api/Pathaks — Protected
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '' } = req.query;
@@ -51,54 +78,74 @@ router.get('/', authMiddleware, async (req, res) => {
 
     const where = search
       ? {
-          OR: [
-            { name: { contains: search } },
-            { description: { contains: search } },
-          ],
-        }
+        OR: [
+          { name: { contains: search } },
+          { description: { contains: search } },
+          { adminName: { contains: search } },
+          { adminEmail: { contains: search } },
+          { address: { contains: search } },
+        ],
+      }
       : {};
 
-    const [pataks, total] = await Promise.all([
-      prisma.patak.findMany({
+    const [Pathaks, total] = await Promise.all([
+      prisma.Pathak.findMany({
         where,
         skip,
         take,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.patak.count({ where }),
+      prisma.Pathak.count({ where }),
     ]);
 
     res.json({
-      data: pataks,
+      data: Pathaks,
       total,
       page: parseInt(page),
       limit: parseInt(limit),
       totalPages: Math.ceil(total / take),
     });
   } catch (error) {
-    console.error('Get pataks error:', error);
+    console.error('Get Pathaks error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// PUT /api/pataks/:id — Protected
-router.put('/:id', authMiddleware, async (req, res) => {
+// PUT /api/Pathaks/:id — Protected (with logo upload)
+router.put('/:id', authMiddleware, upload.single('logo'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, adminName, adminEmail, address } = req.body;
 
     if (!name) {
-      return res.status(400).json({ error: 'Patak name is required.' });
+      return res.status(400).json({ error: 'Pathak name is required.' });
     }
 
-    const patak = await prisma.patak.update({
+    const updateData = {
+      name,
+      description: description || null,
+      adminName: adminName || null,
+      adminEmail: adminEmail || null,
+      address: address || null,
+    };
+
+    if (req.file) {
+      const uploaded = await imagekit.upload({
+        file: req.file.buffer,
+        fileName: `Pathak-logo-${Date.now()}-${req.file.originalname}`,
+        folder: '/Pathak-logos',
+      });
+      updateData.logoUrl = uploaded.url;
+    }
+
+    const Pathak = await prisma.Pathak.update({
       where: { id: parseInt(id) },
-      data: { name, description },
+      data: updateData,
     });
 
-    res.json({ message: 'Patak updated successfully', patak });
+    res.json({ message: 'Pathak updated successfully', Pathak });
   } catch (error) {
-    console.error('Update patak error:', error);
+    console.error('Update Pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });

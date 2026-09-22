@@ -2,29 +2,31 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../store/slices/authSlice';
-import { useGetUsersQuery, useGetPataksQuery } from '../store/api/apiSlice';
+import { useGetUsersQuery, useGetPathaksQuery } from '../store/api/apiSlice';
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineLink } from 'react-icons/hi';
 
 function DashboardHome() {
   const admin = useSelector(selectCurrentUser);
   const { data: users = [], isLoading: loadingUsers } = useGetUsersQuery();
-  const { data: pataks = [], isLoading: loadingPataks } = useGetPataksQuery();
+  const { data: Pathaks = [], isLoading: loadingPathaks } = useGetPathaksQuery();
 
-  const loading = loadingUsers || loadingPataks;
+  const loading = loadingUsers || loadingPathaks;
 
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-2xl p-8 border border-primary/10">
-        <h2 className="text-3xl font-bold">
-          Welcome back, <span className="text-primary">{admin?.name || 'Admin'}</span> 👋
-        </h2>
-        <p className="text-base-content/60 mt-2">Here's what's happening with your platform today.</p>
+      <div className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+        <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
+            Welcome back, <span className="text-primary">{admin?.name || 'Admin'}</span> 👋
+          </h2>
+          <p className="text-sm text-base-content/50 mt-1">Here's what's happening with your platform today.</p>
+        </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="card bg-base-100 border border-base-content/5 shadow-sm hover:shadow-md transition-shadow">
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
@@ -40,13 +42,13 @@ function DashboardHome() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-content/5 shadow-sm hover:shadow-md transition-shadow">
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-base-content/50 font-medium">Total Pathaks</p>
+                <p className="text-sm text-base-content/50 font-medium">Total Pataks</p>
                 <p className="text-3xl font-bold mt-1">
-                  {loading ? <span className="loading loading-spinner loading-sm"></span> : pataks.length}
+                  {loading ? <span className="loading loading-spinner loading-sm"></span> : Pathaks.length}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
@@ -56,13 +58,13 @@ function DashboardHome() {
           </div>
         </div>
 
-        <div className="card bg-base-100 border border-base-content/5 shadow-sm hover:shadow-md transition-shadow">
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-base-content/50 font-medium">Referral Code</p>
-                <p className="text-lg font-mono font-bold mt-1 text-primary">
-                  {admin?.referralCode || '...'}
+                <p className="text-xl font-bold mt-2 font-mono bg-base-200 px-3 py-1 rounded-lg inline-block">
+                  {admin?.referralCode || '—'}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -83,7 +85,7 @@ export default function DashboardPage() {
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-base-200">
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
-      
+
       <div className="drawer-content flex flex-col h-screen overflow-hidden">
         {/* Mobile Navbar */}
         <div className="w-full navbar bg-base-300 lg:hidden border-b border-base-content/10 shadow-sm sticky top-0 z-40">
@@ -101,12 +103,12 @@ export default function DashboardPage() {
             </span>
           </div>
         </div>
-        
+
         <main className="flex-1 flex flex-col p-4 md:p-8 overflow-auto">
           <div className="flex-1">
             {isHome ? <DashboardHome /> : <Outlet />}
           </div>
-          
+
           {/* Dashboard Footer */}
           <footer className="mt-8 pt-4 border-t border-base-content/10 text-center text-xs sm:text-sm text-base-content/60">
             <p>
@@ -116,10 +118,10 @@ export default function DashboardPage() {
             </p>
           </footer>
         </main>
-      </div> 
-      
+      </div>
+
       <div className="drawer-side z-[99]">
-        <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label> 
+        <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
         <Sidebar />
       </div>
     </div>
