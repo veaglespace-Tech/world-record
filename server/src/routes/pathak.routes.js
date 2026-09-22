@@ -22,7 +22,7 @@ router.get('/public', async (req, res) => {
   try {
     const pathakList = await prisma.Pathak.findMany({
       select: { id: true, name: true },
-      orderBy: { name: 'asc' },
+      orderBy: { id: 'asc' },
     });
     res.json(pathakList);
   } catch (error) {
@@ -93,7 +93,7 @@ router.get('/', authMiddleware, async (req, res) => {
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { id: 'asc' },
       }),
       prisma.Pathak.count({ where }),
     ]);
