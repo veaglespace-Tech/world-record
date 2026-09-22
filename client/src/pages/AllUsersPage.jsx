@@ -99,8 +99,8 @@ export default function AllUsersPage() {
         'Aadhar No': user.aadharNo || 'N/A',
         'Address': user.address || 'N/A',
         'Organization (Pathak)': PathakName,
-        'Passport Photo': user.passportPhoto ? `${API_URL.replace('/api', '')}${user.passportPhoto}` : 'N/A',
-        'Aadhar Card': user.aadharImage ? `${API_URL.replace('/api', '')}${user.aadharImage}` : 'N/A',
+        'Passport Photo': user.passportPhoto ? `=HYPERLINK("${API_URL.replace('/api', '')}${user.passportPhoto}", "View Passport")` : 'N/A',
+        'Aadhar Card': user.aadharImage ? `=HYPERLINK("${API_URL.replace('/api', '')}${user.aadharImage}", "View Aadhar")` : 'N/A',
         'Registered Date': new Date(user.createdAt).toLocaleDateString(),
       }));
 
