@@ -9,7 +9,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ReferralPage from './pages/ReferralPage';
 import AllUsersPage from './pages/AllUsersPage';
-import AllPataksPage from './pages/AllPataksPage';
+import AllPathakPage from './pages/AllPathakPage';
 import SettingsPage from './pages/SettingsPage';
 import UserRegistrationPage from './pages/UserRegistrationPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -64,7 +64,7 @@ function App() {
           >
             <Route path="referral" element={<ReferralPage />} />
             <Route path="users" element={<AllUsersPage />} />
-            <Route path="pataks" element={<AllPataksPage />} />
+            <Route path="pathak" element={<AllPathakPage />} />
             <Route path="settings" element={<SettingsPage />} />
           </Route>
 

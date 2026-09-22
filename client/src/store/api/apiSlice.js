@@ -73,19 +73,19 @@ export const apiSlice = createApi({
     }),
 
     // Pathak Endpoints
-    getPathaks: builder.query({
+    getPathakList: builder.query({
       query: (params) => ({
-        url: '/Pathaks',
+        url: '/pathak',
         params, // { page, limit, search }
       }),
       providesTags: ['Pathak'],
     }),
-    getPublicPathaks: builder.query({
-      query: () => '/Pathaks/public',
+    getPublicPathakList: builder.query({
+      query: () => '/pathak/public',
     }),
     createPathak: builder.mutation({
       query: (formData) => ({
-        url: '/Pathaks',
+        url: '/pathak',
         method: 'POST',
         body: formData, // FormData for logo upload
       }),
@@ -93,7 +93,7 @@ export const apiSlice = createApi({
     }),
     updatePathak: builder.mutation({
       query: ({ id, formData }) => ({
-        url: `/Pathaks/${id}`,
+        url: `/pathak/${id}`,
         method: 'PUT',
         body: formData, // FormData for logo upload
       }),
@@ -112,8 +112,8 @@ export const {
   useUpdateSettingsMutation,
   useGetUsersQuery,
   useRegisterUserMutation,
-  useGetPathaksQuery,
-  useGetPublicPathaksQuery,
+  useGetPathakListQuery,
+  useGetPublicPathakListQuery,
   useCreatePathakMutation,
   useUpdatePathakMutation,
 } = apiSlice;

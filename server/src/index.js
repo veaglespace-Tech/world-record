@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
-const patakRoutes = require('./routes/patak.routes');
+const pathakRoutes = require('./routes/pathak.routes');
 const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
@@ -25,7 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/pataks', patakRoutes);
+app.use('/api/pathak', pathakRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check

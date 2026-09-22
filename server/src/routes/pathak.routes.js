@@ -2,7 +2,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
-const ImageKit = require('@imagekit/nodejs');
+const ImageKit = require('imagekit');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -17,21 +17,21 @@ const imagekit = new ImageKit({
 // Multer memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 
-// GET /api/Pathaks/public — Public route (for registration dropdown)
+// GET /api/pathak/public — Public route (for registration dropdown)
 router.get('/public', async (req, res) => {
   try {
-    const Pathaks = await prisma.Pathak.findMany({
+    const pathakList = await prisma.Pathak.findMany({
       select: { id: true, name: true },
       orderBy: { name: 'asc' },
     });
-    res.json(Pathaks);
+    res.json(pathakList);
   } catch (error) {
-    console.error('Get public Pathaks error:', error);
+    console.error('Get public pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// POST /api/Pathaks — Protected (with logo upload)
+// POST /api/pathak — Protected (with logo upload)
 router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
   try {
     const { name, description, adminName, adminEmail, address } = req.body;
@@ -51,7 +51,7 @@ router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
       logoUrl = uploaded.url;
     }
 
-    const Pathak = await prisma.Pathak.create({
+    const pathakData = await prisma.Pathak.create({
       data: {
         name,
         description: description || null,
@@ -62,14 +62,14 @@ router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
       },
     });
 
-    res.status(201).json(Pathak);
+    res.status(201).json(pathakData);
   } catch (error) {
     console.error('Create Pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// GET /api/Pathaks — Protected
+// GET /api/pathak — Protected
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '' } = req.query;
@@ -88,7 +88,7 @@ router.get('/', authMiddleware, async (req, res) => {
       }
       : {};
 
-    const [Pathaks, total] = await Promise.all([
+    const [pathakList, total] = await Promise.all([
       prisma.Pathak.findMany({
         where,
         skip,
@@ -99,19 +99,19 @@ router.get('/', authMiddleware, async (req, res) => {
     ]);
 
     res.json({
-      data: Pathaks,
+      data: pathakList,
       total,
       page: parseInt(page),
       limit: parseInt(limit),
       totalPages: Math.ceil(total / take),
     });
   } catch (error) {
-    console.error('Get Pathaks error:', error);
+    console.error('Get pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
-// PUT /api/Pathaks/:id — Protected (with logo upload)
+// PUT /api/pathak/:id — Protected (with logo upload)
 router.put('/:id', authMiddleware, upload.single('logo'), async (req, res) => {
   try {
     const { id } = req.params;
@@ -138,12 +138,12 @@ router.put('/:id', authMiddleware, upload.single('logo'), async (req, res) => {
       updateData.logoUrl = uploaded.url;
     }
 
-    const Pathak = await prisma.Pathak.update({
+    const pathakData = await prisma.Pathak.update({
       where: { id: parseInt(id) },
       data: updateData,
     });
 
-    res.json({ message: 'Pathak updated successfully', Pathak });
+    res.json({ message: 'Pathak updated successfully', pathak: pathakData });
   } catch (error) {
     console.error('Update Pathak error:', error);
     res.status(500).json({ error: 'Internal server error.' });

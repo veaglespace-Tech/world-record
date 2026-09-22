@@ -74,7 +74,7 @@ export default function AllUsersPage() {
 
     // Group users by Pathak
     const usersByPathak = allUsers.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
+      const PathakName = user.Pathak?.name || user.Pathak?.name || 'Unassigned';
       if (!acc[PathakName]) {
         acc[PathakName] = [];
       }
@@ -134,7 +134,7 @@ export default function AllUsersPage() {
     const tableColumn = ["S.No", "Full Name", "Email", "Phone", "DOB", "Gender", "B.Group", "Address", "Registered"];
     // Group users by Pathak for PDF
     const usersByPathak = allUsers.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
+      const PathakName = user.Pathak?.name || user.Pathak?.name || 'Unassigned';
       if (!acc[PathakName]) acc[PathakName] = [];
       acc[PathakName].push(user);
       return acc;
@@ -176,19 +176,19 @@ export default function AllUsersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-6">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-4 sm:p-6 text-center md:text-left">
         <div>
           <div className="mb-1">
-            <h2 className="text-2xl font-bold flex items-center gap-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              <HiOutlineUsers className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-bold flex items-center justify-center md:justify-start gap-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <HiOutlineUsers className="w-6 h-6 text-primary shrink-0" />
               All Users
             </h2>
           </div>
-          <p className="text-sm text-base-content/50 ml-10">
+          <p className="text-sm text-base-content/50 md:ml-8">
             Showing {users.length} of {total} total user{total !== 1 ? 's' : ''}
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-primary text-primary-content shadow-md shadow-primary/20 cursor-pointer gap-2">
               <HiOutlineDownload className="w-5 h-5" />

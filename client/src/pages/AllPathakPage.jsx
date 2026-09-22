@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetPathaksQuery, useCreatePathakMutation, useUpdatePathakMutation } from '../store/api/apiSlice';
+import { useGetPathakListQuery, useCreatePathakMutation, useUpdatePathakMutation } from '../store/api/apiSlice';
 import { useDebounce } from 'use-debounce';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -16,17 +16,17 @@ const EMPTY_FORM = {
   name: '', description: '', adminName: '', adminEmail: '', address: '',
 };
 
-export default function AllPathaksPage() {
+export default function AllPathakPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 500);
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data, isLoading, refetch, isFetching } = useGetPathaksQuery({
+  const { data, isLoading, refetch, isFetching } = useGetPathakListQuery({
     page, limit, search: debouncedSearch,
   });
 
-  const Pathaks = data?.data || [];
+  const pathakList = data?.data || [];
   const total = data?.total || 0;
   const totalPages = data?.totalPages || 1;
 
@@ -111,8 +111,8 @@ export default function AllPathaksPage() {
 
   // Export to Excel
   const exportToExcel = () => {
-    if (Pathaks.length === 0) return;
-    const exportData = Pathaks.map((p, index) => ({
+    if (pathakList.length === 0) return;
+    const exportData = pathakList.map((p, index) => ({
       'S.No': index + 1,
       'Organization Name': p.name,
       'Description': p.description || 'N/A',
@@ -124,21 +124,21 @@ export default function AllPathaksPage() {
     }));
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pathaks');
-    XLSX.writeFile(workbook, 'WorldRecord_Pathaks.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pathak');
+    XLSX.writeFile(workbook, 'WorldRecord_pathakData.xlsx');
   };
 
   // Export to PDF
   const exportToPDF = () => {
-    if (Pathaks.length === 0) return;
+    if (pathakList.length === 0) return;
     const doc = new jsPDF('landscape');
     doc.setFontSize(16);
-    doc.text('Guinness Book of World Record - Pathaks Report', 14, 15);
+    doc.text('Guinness Book of World Record - Pathak Report', 14, 15);
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
 
     const tableColumn = ['S.No', 'Name', 'Admin Name', 'Admin Email', 'Address', 'Members', 'Created'];
-    const tableRows = Pathaks.map((p, i) => [
+    const tableRows = pathakList.map((p, i) => [
       i + 1,
       p.name,
       p.adminName || 'N/A',
@@ -157,7 +157,7 @@ export default function AllPathaksPage() {
       headStyles: { fillColor: [4, 110, 202] }
     });
 
-    doc.save('WorldRecord_Pathaks.pdf');
+    doc.save('WorldRecord_pathakData.pdf');
   };
 
   /* ── UI ── */
@@ -165,19 +165,19 @@ export default function AllPathaksPage() {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-6">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-4 sm:p-6 text-center md:text-left">
         <div>
           <div className="mb-1">
-            <h2 className="text-2xl font-bold flex items-center gap-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              <HiOutlineOfficeBuilding className="w-6 h-6 text-primary" />
-              All Pataks
+            <h2 className="text-2xl font-bold flex items-center justify-center md:justify-start gap-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              <HiOutlineOfficeBuilding className="w-6 h-6 text-primary shrink-0" />
+              All Pathak
             </h2>
           </div>
-          <p className="text-sm text-base-content/50 ml-10">
+          <p className="text-sm text-base-content/50 md:ml-8">
             {total} organization{total !== 1 ? 's' : ''} total
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-success text-white btn-sm gap-2">
               <HiOutlineDownload className="w-4 h-4" />
@@ -194,7 +194,7 @@ export default function AllPathaksPage() {
           </button>
           <button onClick={openAdd} className="btn btn-primary text-primary-content shadow-md shadow-primary/20">
             <HiOutlinePlus className="w-5 h-5" />
-            Add Patak
+            Add Pathak
           </button>
         </div>
       </div>
@@ -255,7 +255,7 @@ export default function AllPathaksPage() {
                     <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                       <HiOutlineOfficeBuilding className="w-5 h-5 text-base-content/40" />
                       <input
-                        type="text" name="name" placeholder="e.g. Veagle Patak"
+                        type="text" name="name" placeholder="e.g. Veagle Pathak"
                         className="grow bg-transparent outline-none"
                         value={form.name} onChange={handleChange} required
                       />
@@ -345,7 +345,7 @@ export default function AllPathaksPage() {
       <label className="input input-bordered flex items-center gap-3 max-w-md focus-within:input-primary">
         <HiOutlineSearch className="w-5 h-5 text-base-content/40" />
         <input
-          type="text" className="grow" placeholder="Search pathaks..."
+          type="text" className="grow" placeholder="Search pathak..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
         />
@@ -357,10 +357,10 @@ export default function AllPathaksPage() {
           <div className="flex items-center justify-center h-40">
             <span className="loading loading-spinner loading-lg text-primary" />
           </div>
-        ) : Pathaks.length === 0 ? (
+        ) : pathakList.length === 0 ? (
           <div className="text-center py-16 text-base-content/40">
             <HiOutlineOfficeBuilding className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-lg font-medium">No pathaks found</p>
+            <p className="text-lg font-medium">No pathak found</p>
             <p className="text-sm mt-1">
               {debouncedSearch ? 'Try adjusting your search' : 'Click "Add Pathak" to create one'}
             </p>
@@ -381,15 +381,15 @@ export default function AllPathaksPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {Pathaks.map((Pathak, index) => (
-                    <tr key={Pathak.id} className="hover">
+                  {pathakList.map((pathakData, index) => (
+                    <tr key={pathakData.id} className="hover">
                       <td className="font-mono text-base-content/50 text-sm">
                         {(page - 1) * limit + index + 1}
                       </td>
                       <td>
-                        {Pathak.logoUrl ? (
+                        {pathakData.logoUrl ? (
                           <div className="w-10 h-10 rounded-xl overflow-hidden border border-base-content/10">
-                            <img src={Pathak.logoUrl} alt={Pathak.name} className="w-full h-full object-cover" />
+                            <img src={pathakData.logoUrl} alt={pathakData.name} className="w-full h-full object-cover" />
                           </div>
                         ) : (
                           <div className="w-10 h-10 rounded-xl bg-base-200 flex items-center justify-center text-base-content/30">
@@ -398,36 +398,36 @@ export default function AllPathaksPage() {
                         )}
                       </td>
                       <td>
-                        <div className="font-semibold">{Pathak.name}</div>
-                        {Pathak.description && (
-                          <div className="text-xs text-base-content/50 max-w-[180px] truncate" title={Pathak.description}>
-                            {Pathak.description}
+                        <div className="font-semibold">{pathakData.name}</div>
+                        {pathakData.description && (
+                          <div className="text-xs text-base-content/50 max-w-[180px] truncate" title={pathakData.description}>
+                            {pathakData.description}
                           </div>
                         )}
                       </td>
                       <td>
-                        {Pathak.adminName ? (
+                        {pathakData.adminName ? (
                           <div>
-                            <div className="text-sm font-medium">{Pathak.adminName}</div>
-                            {Pathak.adminEmail && (
-                              <div className="text-xs text-base-content/50">{Pathak.adminEmail}</div>
+                            <div className="text-sm font-medium">{pathakData.adminName}</div>
+                            {pathakData.adminEmail && (
+                              <div className="text-xs text-base-content/50">{pathakData.adminEmail}</div>
                             )}
                           </div>
                         ) : (
                           <span className="text-base-content/30 text-sm">—</span>
                         )}
                       </td>
-                      <td className="text-sm text-base-content/60 max-w-[150px] truncate" title={Pathak.address}>
-                        {Pathak.address || '—'}
+                      <td className="text-sm text-base-content/60 max-w-[150px] truncate" title={pathakData.address}>
+                        {pathakData.address || '—'}
                       </td>
                       <td className="text-base-content/50 text-sm">
-                        {new Date(Pathak.createdAt).toLocaleDateString('en-IN', {
+                        {new Date(pathakData.createdAt).toLocaleDateString('en-IN', {
                           day: '2-digit', month: 'short', year: 'numeric',
                         })}
                       </td>
                       <td>
                         <button
-                          onClick={() => openEdit(Pathak)}
+                          onClick={() => openEdit(pathakData)}
                           className="btn btn-info btn-xs text-white"
                           title="Edit"
                         >

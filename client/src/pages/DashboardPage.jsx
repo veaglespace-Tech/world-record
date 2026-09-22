@@ -2,15 +2,16 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../store/slices/authSlice';
-import { useGetUsersQuery, useGetPathaksQuery } from '../store/api/apiSlice';
+import { useGetUsersQuery, useGetPathakListQuery } from '../store/api/apiSlice';
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineLink } from 'react-icons/hi';
 
 function DashboardHome() {
   const admin = useSelector(selectCurrentUser);
   const { data: users = [], isLoading: loadingUsers } = useGetUsersQuery();
-  const { data: Pathaks = [], isLoading: loadingPathaks } = useGetPathaksQuery();
-
-  const loading = loadingUsers || loadingPathaks;
+  const { data: pathakData = {}, isLoading: loadingPathak } = useGetPathakListQuery({ page: 1, limit: 10 });
+  const pathakList = pathakData.data || [];
+  const totalPathak = pathakData.total || 0;
+  const loading = loadingUsers || loadingPathak;
 
   return (
     <div className="space-y-8">
@@ -46,9 +47,9 @@ function DashboardHome() {
           <div className="card-body">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-base-content/50 font-medium">Total Pataks</p>
+                <p className="text-sm text-base-content/50 font-medium">Total pathak</p>
                 <p className="text-3xl font-bold mt-1">
-                  {loading ? <span className="loading loading-spinner loading-sm"></span> : Pathaks.length}
+                  {loading ? <span className="loading loading-spinner loading-sm"></span> : totalPathak}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useRegisterUserMutation, useGetPublicPathaksQuery } from '../store/api/apiSlice';
+import { useRegisterUserMutation, useGetPublicPathakListQuery } from '../store/api/apiSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker,
@@ -11,14 +11,14 @@ import {
 export default function UserRegistrationPage() {
   const { referralCode } = useParams();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
-  const { data: pataks = [], isLoading: isLoadingPataks } = useGetPublicPathaksQuery();
+  const { data: pathakList = [], isLoading: isLoadingPathak } = useGetPublicPathakListQuery();
 
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
     address: '',
-    patakId: '',
+    pathakId: '',
     dob: '',
     gender: '',
     bloodGroup: '',
@@ -52,7 +52,7 @@ export default function UserRegistrationPage() {
     setError('');
 
     // Basic Validation
-    if (!formData.patakId) return setError('Please Select a pathak (Organization).');
+    if (!formData.pathakId) return setError('Please Select a pathak (Organization).');
     if (!files.aadharImage || !files.passportPhoto) return setError('Both Aadhar image and Passport photo are required.');
     
     // Prepare FormData for file upload
@@ -131,16 +131,16 @@ export default function UserRegistrationPage() {
                       <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                         <HiOutlineOfficeBuilding className="w-5 h-5 text-base-content/40" />
                         <select
-                          name="patakId"
+                          name="pathakId"
                           className="grow bg-transparent outline-none cursor-pointer"
-                          value={formData.patakId}
+                          value={formData.pathakId}
                           onChange={handleChange}
                           required
                         >
                           <option value="" disabled>
-                            {isLoadingPataks ? 'Loading Pataks...' : '-- Select Your Pathak --'}
+                            {isLoadingPathak ? 'Loading Pathak...' : '-- Select Your Pathak --'}
                           </option>
-                          {pataks.map((p) => (
+                          {pathakList.map((p) => (
                             <option key={p.id} value={p.id}>{p.name}</option>
                           ))}
                         </select>
@@ -298,21 +298,39 @@ export default function UserRegistrationPage() {
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-6 mt-2 border-t border-base-content/10">
                     <button
                       type="submit"
-                      className={`btn bg-gradient-to-r from-primary to-secondary text-white border-0 hover:shadow-lg hover:shadow-primary/30 w-full mt-2 text-base font-semibold shadow-md transition-all ${isLoading ? 'loading' : ''}`}
+                      className="relative w-full inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-300 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 bg-[length:200%_auto] border border-transparent rounded-xl shadow-lg hover:shadow-indigo-500/40 hover:scale-[1.02] hover:bg-[right_center] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 overflow-hidden group"
                       disabled={isLoading}
                     >
-                      {isLoading ? (
-                        <>
-                          <span className="loading loading-spinner loading-sm"></span>
-                          Submitting...
-                        </>
-                      ) : (
-                        'Complete Registration'
-                      )}
+                      {/* Inner shine effect */}
+                      <span className="absolute inset-0 w-full h-full rounded-xl opacity-30 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></span>
+                      
+                      <span className="relative flex items-center gap-2 tracking-wide">
+                        {isLoading ? (
+                          <>
+                            <span className="loading loading-spinner loading-md"></span>
+                            <span>Processing...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Complete Registration</span>
+                            <svg 
+                              className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" 
+                              fill="none" 
+                              viewBox="0 0 24 24" 
+                              stroke="currentColor"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                          </>
+                        )}
+                      </span>
                     </button>
+                    <p className="text-center text-xs text-base-content/50 mt-4 font-medium">
+                      By registering, you agree to the organization's rules and guidelines.
+                    </p>
                   </div>
                 </form>
               </div>

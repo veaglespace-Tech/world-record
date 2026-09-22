@@ -31,7 +31,7 @@ export default function Sidebar() {
     { to: '/dashboard', icon: HiOutlineHome, label: 'Dashboard' },
     { to: '/dashboard/referral', icon: HiOutlineLink, label: 'My Referral Link' },
     { to: '/dashboard/users', icon: HiOutlineUsers, label: 'All Users' },
-    { to: '/dashboard/pataks', icon: HiOutlineOfficeBuilding, label: 'All Pathaks' },
+    { to: '/dashboard/pathak', icon: HiOutlineOfficeBuilding, label: 'All Pathak' },
     { to: '/dashboard/settings', icon: HiOutlineCog, label: 'Settings' },
   ];
 

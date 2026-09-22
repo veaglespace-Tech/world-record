@@ -35,14 +35,14 @@ router.post(
         phone,
         address,
         referralCode,
-        patakId,
+        pathakId,
         dob,
         gender,
         bloodGroup,
         aadharNo,
       } = req.body;
 
-      if (!fullName || !email || !phone || !referralCode || !patakId || !dob || !gender || !bloodGroup || !aadharNo) {
+      if (!fullName || !email || !phone || !referralCode || !pathakId || !dob || !gender || !bloodGroup || !aadharNo) {
         return res.status(400).json({
           error: 'All fields are required.',
         });
@@ -81,7 +81,7 @@ router.post(
           email,
           phone,
           address: address || null,
-          patakId: parseInt(patakId),
+          PathakId: parseInt(pathakId),
           dob,
           gender,
           bloodGroup,
@@ -134,7 +134,7 @@ router.get('/', authMiddleware, async (req, res) => {
         skip,
         take,
         orderBy: { createdAt: 'desc' },
-        include: { patak: true }, // Include organization details
+        include: { Pathak: true }, // Include organization details
       }),
       prisma.user.count({ where }),
     ]);
