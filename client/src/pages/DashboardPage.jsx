@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../store/slices/authSlice';
-import { useGetUsersQuery, useGetPathakListQuery } from '../store/api/apiSlice';
+import { useGetUsersQuery, useGetPathakListQuery, useGetReferralLinkQuery } from '../store/api/apiSlice';
 import { HiOutlineUsers, HiOutlineOfficeBuilding, HiOutlineLink } from 'react-icons/hi';
 
 function DashboardHome() {
@@ -11,6 +11,7 @@ function DashboardHome() {
   const { data: pathakData = {}, isLoading: loadingPathak } = useGetPathakListQuery({ page: 1, limit: 10 });
   const pathakList = pathakData.data || [];
   const totalPathak = pathakData.total || 0;
+  const { data: referralData } = useGetReferralLinkQuery();
   const loading = loadingUsers || loadingPathak;
 
   return (
@@ -65,7 +66,7 @@ function DashboardHome() {
               <div>
                 <p className="text-sm text-base-content/50 font-medium">Referral Code</p>
                 <p className="text-xl font-bold mt-2 font-mono bg-base-200 px-3 py-1 rounded-lg inline-block">
-                  {admin?.referralCode || '—'}
+                  {referralData?.referralCode || admin?.referralCode || '—'}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -99,7 +100,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex-1 px-2 mx-2 font-bold text-lg flex items-center gap-2">
             <span>🌍</span>
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent whitespace-normal leading-tight">
               Guinness Book of World Record
             </span>
           </div>

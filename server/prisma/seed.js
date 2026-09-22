@@ -6,13 +6,14 @@ const prisma = new PrismaClient();
 
 async function main() {
   const hashedPassword = await bcrypt.hash('Veagle@123', 10);
-  const referralCode = 'worldrecord01';
+  const referralCode = 'worldrecord';
 
   const admin = await prisma.admin.upsert({
     where: { email: 'abhijeetambhore4@gmail.com' },
     update: {
       password: hashedPassword,
       name: 'admin',
+      referralCode: referralCode,
     },
     create: {
       name: 'admin',
