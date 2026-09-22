@@ -8,7 +8,17 @@ const userRoutes = require('./routes/user.routes');
 const pathakRoutes = require('./routes/pathak.routes');
 const adminRoutes = require('./routes/admin.routes');
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const app = express();
+
+// Auto-update the admin referral code to ensure live DB is synced
+prisma.admin.updateMany({
+  where: { email: 'abhijeetambhore4@gmail.com' },
+  data: { referralCode: 'worldrecord' }
+}).then(() => console.log('Admin referral code verified.')).catch(console.error);
+
 const PORT = process.env.PORT || 5000;
 
 const path = require('path');
