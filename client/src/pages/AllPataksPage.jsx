@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useGetPathaksQuery, useCreatePathakMutation, useUpdatePathakMutation } from '../store/api/apiSlice';
 import { useDebounce } from 'use-debounce';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import {
   HiOutlineOfficeBuilding, HiOutlinePlus, HiOutlinePencil,
   HiOutlineRefresh, HiOutlineSearch, HiOutlineChevronLeft,
   HiOutlineChevronRight, HiOutlineUser, HiOutlineMail,
   HiOutlineLocationMarker, HiOutlinePhotograph, HiOutlineX,
+  HiOutlineDownload, HiOutlineDocumentText,
 } from 'react-icons/hi';
 
 const EMPTY_FORM = {
@@ -105,6 +109,57 @@ export default function AllPathaksPage() {
     }
   };
 
+  // Export to Excel
+  const exportToExcel = () => {
+    if (Pathaks.length === 0) return;
+    const exportData = Pathaks.map((p, index) => ({
+      'S.No': index + 1,
+      'Organization Name': p.name,
+      'Description': p.description || 'N/A',
+      'Admin Name': p.adminName || 'N/A',
+      'Admin Email': p.adminEmail || 'N/A',
+      'Address': p.address || 'N/A',
+      'Total Members': p._count?.users ?? p.users?.length ?? 0,
+      'Created Date': new Date(p.createdAt).toLocaleDateString(),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Pathaks');
+    XLSX.writeFile(workbook, 'WorldRecord_Pathaks.xlsx');
+  };
+
+  // Export to PDF
+  const exportToPDF = () => {
+    if (Pathaks.length === 0) return;
+    const doc = new jsPDF('landscape');
+    doc.setFontSize(16);
+    doc.text('Guinness Book of World Record - Pathaks Report', 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
+
+    const tableColumn = ['S.No', 'Name', 'Admin Name', 'Admin Email', 'Address', 'Members', 'Created'];
+    const tableRows = Pathaks.map((p, i) => [
+      i + 1,
+      p.name,
+      p.adminName || 'N/A',
+      p.adminEmail || 'N/A',
+      p.address || 'N/A',
+      p._count?.users ?? p.users?.length ?? 0,
+      new Date(p.createdAt).toLocaleDateString(),
+    ]);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 28,
+      theme: 'grid',
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [4, 110, 202] }
+    });
+
+    doc.save('WorldRecord_Pathaks.pdf');
+  };
+
   /* ── UI ── */
   return (
     <div className="space-y-6">
@@ -122,7 +177,17 @@ export default function AllPathaksPage() {
             {total} organization{total !== 1 ? 's' : ''} total
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-2">
+          <div className="dropdown dropdown-end">
+            <label tabIndex={0} className="btn btn-success text-white btn-sm gap-2">
+              <HiOutlineDownload className="w-4 h-4" />
+              Export
+            </label>
+            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-2 border border-base-content/10">
+              <li><button onClick={exportToExcel}><HiOutlineDocumentText className="w-4 h-4" /> Excel (.xlsx)</button></li>
+              <li><button onClick={exportToPDF}><HiOutlineDocumentText className="w-4 h-4 text-error" /> PDF (.pdf)</button></li>
+            </ul>
+          </div>
           <button onClick={refetch} className="btn btn-ghost border border-base-content/10 shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
             <HiOutlineRefresh className={`w-5 h-5 ${isFetching ? 'animate-spin text-primary' : 'text-base-content/50'}`} />
             Refresh

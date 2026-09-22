@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   const hashedPassword = await bcrypt.hash('Veagle@123', 10);
-  const referralCode = uuidv4().split('-')[0];
+  const referralCode = 'worldrecord01';
 
   const admin = await prisma.admin.upsert({
     where: { email: 'abhijeetambhore4@gmail.com' },
