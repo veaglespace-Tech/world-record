@@ -1,89 +1,103 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const apiSlice = createApi({
-  reducerPath: "api",
+  reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api",
+    baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
       if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set('authorization', `Bearer ${token}`);
       }
       return headers;
     },
   }),
-  tagTypes: ["User", "Patak", "Admin"],
+  tagTypes: ['User', 'Pathak', 'Admin'],
   endpoints: (builder) => ({
     // Auth Endpoints
     login: builder.mutation({
       query: (credentials) => ({
-        url: "/auth/login",
-        method: "POST",
+        url: '/auth/login',
+        method: 'POST',
         body: credentials,
       }),
     }),
     getMe: builder.query({
-      query: () => "/auth/me",
-      providesTags: ["Admin"],
+      query: () => '/auth/me',
+      providesTags: ['Admin'],
+    }),
+    forgotPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/forgot-password',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/reset-password',
+        method: 'POST',
+        body: data,
+      }),
     }),
 
     // Admin Endpoints
     getReferralLink: builder.query({
-      query: () => "/admin/referral-link",
-      providesTags: ["Admin"],
+      query: () => '/admin/referral-link',
+      providesTags: ['Admin'],
     }),
     updateSettings: builder.mutation({
       query: (data) => ({
-        url: "/admin/settings",
-        method: "PUT",
+        url: '/admin/settings',
+        method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ["Admin"],
+      invalidatesTags: ['Admin'],
     }),
 
     // User Endpoints
     getUsers: builder.query({
       query: (params) => ({
-        url: "/users",
+        url: '/users',
         params, // { page, limit, search, filter }
       }),
-      providesTags: ["User"],
+      providesTags: ['User'],
     }),
     registerUser: builder.mutation({
       query: (formData) => ({
-        url: "/users/register",
-        method: "POST",
+        url: '/users/register',
+        method: 'POST',
         body: formData, // passing FormData directly
       }),
-      invalidatesTags: ["User"], // Invalidate list if admin is viewing it
+      invalidatesTags: ['User'], // Invalidate list if admin is viewing it
     }),
 
-    // Patak Endpoints
-    getPataks: builder.query({
+    // Pathak Endpoints
+    getPathaks: builder.query({
       query: (params) => ({
-        url: "/pataks",
+        url: '/Pathaks',
         params, // { page, limit, search }
       }),
-      providesTags: ["Patak"],
+      providesTags: ['Pathak'],
     }),
-    getPublicPataks: builder.query({
-      query: () => "/pataks/public",
+    getPublicPathaks: builder.query({
+      query: () => '/Pathaks/public',
     }),
-    createPatak: builder.mutation({
-      query: (data) => ({
-        url: "/pataks",
-        method: "POST",
-        body: data,
+    createPathak: builder.mutation({
+      query: (formData) => ({
+        url: '/Pathaks',
+        method: 'POST',
+        body: formData, // FormData for logo upload
       }),
-      invalidatesTags: ["Patak"],
+      invalidatesTags: ['Pathak'],
     }),
-    updatePatak: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/pataks/${id}`,
-        method: "PUT",
-        body: data,
+    updatePathak: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `/Pathaks/${id}`,
+        method: 'PUT',
+        body: formData, // FormData for logo upload
       }),
-      invalidatesTags: ["Patak"],
+      invalidatesTags: ['Pathak'],
     }),
   }),
 });
@@ -92,12 +106,14 @@ export const {
   useLoginMutation,
   useGetMeQuery,
   useLazyGetMeQuery,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
   useGetReferralLinkQuery,
   useUpdateSettingsMutation,
   useGetUsersQuery,
   useRegisterUserMutation,
-  useGetPataksQuery,
-  useGetPublicPataksQuery,
-  useCreatePatakMutation,
-  useUpdatePatakMutation,
+  useGetPathaksQuery,
+  useGetPublicPathaksQuery,
+  useCreatePathakMutation,
+  useUpdatePathakMutation,
 } = apiSlice;

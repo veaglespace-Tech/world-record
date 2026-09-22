@@ -46,26 +46,44 @@ export default function AllUsersPage() {
   // Export to Excel
   const exportToExcel = () => {
     if (users.length === 0) return;
-    
-    // Prepare data
-    const exportData = users.map((user, index) => ({
-      'S.No': (page - 1) * limit + index + 1,
-      'Full Name': user.fullName,
-      'Email': user.email,
-      'Phone': user.phone,
-      'DOB': user.dob || 'N/A',
-      'Gender': user.gender || 'N/A',
-      'Blood Group': user.bloodGroup || 'N/A',
-      'Aadhar No': user.aadharNo || 'N/A',
-      'Address': user.address || 'N/A',
-      'Organization (Patak)': user.patak?.name || 'N/A',
-      'Registered Date': new Date(user.createdAt).toLocaleDateString(),
-    }));
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    // Group users by Pathak
+    const usersByPathak = users.reduce((acc, user) => {
+      const PathakName = user.Pathak?.name || 'Unassigned';
+      if (!acc[PathakName]) {
+        acc[PathakName] = [];
+      }
+      acc[PathakName].push(user);
+      return acc;
+    }, {});
+
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Users');
-    XLSX.writeFile(workbook, 'WorldRecord_Users.xlsx');
+
+    // Iterate through each Pathak group and create a sheet
+    Object.keys(usersByPathak).forEach((PathakName) => {
+      const PathakUsers = usersByPathak[PathakName];
+
+      const exportData = PathakUsers.map((user, index) => ({
+        'S.No': index + 1,
+        'Full Name': user.fullName,
+        'Email': user.email,
+        'Phone': user.phone,
+        'DOB': user.dob || 'N/A',
+        'Gender': user.gender || 'N/A',
+        'Blood Group': user.bloodGroup || 'N/A',
+        'Aadhar No': user.aadharNo || 'N/A',
+        'Address': user.address || 'N/A',
+        'Organization (Pathak)': PathakName,
+        'Registered Date': new Date(user.createdAt).toLocaleDateString(),
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      // Clean sheet name (Excel sheet names max 31 chars, no special chars)
+      let sheetName = PathakName.substring(0, 31).replace(/[\\/?*\[\]]/g, '');
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    });
+
+    XLSX.writeFile(workbook, 'WorldRecord_Users_Grouped.xlsx');
   };
 
   // Export to PDF
@@ -73,7 +91,7 @@ export default function AllUsersPage() {
     if (users.length === 0) return;
 
     const doc = new jsPDF('landscape');
-    
+
     // Header
     doc.setFontSize(16);
     doc.text('Guinness Book of World Record - Users Report', 14, 15);
@@ -81,7 +99,7 @@ export default function AllUsersPage() {
     doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 22);
 
     // Table Data
-    const tableColumn = ["S.No", "Full Name", "Phone", "DOB", "Gender", "B.Group", "Patak", "Registered"];
+    const tableColumn = ["S.No", "Full Name", "Phone", "DOB", "Gender", "B.Group", "Pathak", "Registered"];
     const tableRows = users.map((user, index) => [
       (page - 1) * limit + index + 1,
       user.fullName,
@@ -89,7 +107,7 @@ export default function AllUsersPage() {
       user.dob || 'N/A',
       user.gender || 'N/A',
       user.bloodGroup || 'N/A',
-      user.patak?.name || 'N/A',
+      user.Pathak?.name || 'N/A',
       new Date(user.createdAt).toLocaleDateString(),
     ]);
 
@@ -108,31 +126,31 @@ export default function AllUsersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 premium-section !p-6">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-info/10 flex items-center justify-center">
-              <HiOutlineUsers className="w-5 h-5 text-info" />
-            </div>
-            All Users
-          </h2>
-          <p className="text-base-content/60 mt-1 ml-13">
+          <div className="premium-section-title !mb-2">
+            <h2 className="premium-section-title-text flex items-center gap-3">
+              <HiOutlineUsers className="w-6 h-6 text-primary" />
+              All Users
+            </h2>
+          </div>
+          <p className="text-base-content/60 ml-10 font-medium tracking-wide">
             Showing {users.length} of {total} total user{total !== 1 ? 's' : ''}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-success text-white btn-sm gap-2">
-              <HiOutlineDownload className="w-4 h-4" />
-              Export
+            <label tabIndex={0} className="premium-btn !w-auto !py-3 !px-6 cursor-pointer">
+              <HiOutlineDownload className="w-5 h-5" />
+              Export Data
             </label>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-2 border border-base-content/10">
               <li><button onClick={exportToExcel}><HiOutlineDocumentText className="w-4 h-4" /> Excel (.xlsx)</button></li>
               <li><button onClick={exportToPDF}><HiOutlineDocumentText className="w-4 h-4 text-error" /> PDF (.pdf)</button></li>
             </ul>
           </div>
-          <button onClick={refetch} className="btn btn-info btn-sm text-white gap-2" disabled={isFetching}>
-            <HiOutlineRefresh className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+          <button onClick={refetch} className="px-6 py-3 rounded-xl bg-base-200/50 hover:bg-base-200 text-base-content font-bold shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
+            <HiOutlineRefresh className={`w-5 h-5 ${isFetching ? 'animate-spin text-primary' : 'text-base-content/50'}`} />
             Refresh
           </button>
         </div>
@@ -140,12 +158,12 @@ export default function AllUsersPage() {
 
       {/* Filters & Search */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="form-control flex-1">
-          <label className="input input-bordered flex items-center gap-3 focus-within:input-primary">
-            <HiOutlineSearch className="w-5 h-5 text-base-content/40" />
+        <div className="flex-1">
+          <div className="premium-input-group">
+            <HiOutlineSearch className="premium-icon" />
             <input
               type="text"
-              className="grow"
+              className="premium-input"
               placeholder="Search by name, email, or phone..."
               value={search}
               onChange={(e) => {
@@ -153,12 +171,12 @@ export default function AllUsersPage() {
                 setPage(1); // Reset page on search
               }}
             />
-          </label>
+          </div>
         </div>
-        
-        <div className="form-control w-full sm:w-auto">
-          <select 
-            className="select select-bordered"
+
+        <div className="w-full sm:w-auto min-w-[200px]">
+          <select
+            className="premium-input-group !bg-base-200/40 text-base-content/70 cursor-pointer w-full"
             value={filter}
             onChange={(e) => {
               setFilter(e.target.value);
@@ -195,7 +213,7 @@ export default function AllUsersPage() {
                     <th>#</th>
                     <th>Full Name</th>
                     <th>Contact</th>
-                    <th>Patak</th>
+                    <th>Pathak</th>
                     <th>Details</th>
                     <th>Documents</th>
                   </tr>
@@ -211,10 +229,10 @@ export default function AllUsersPage() {
                           <div className="avatar">
                             <div className="w-10 h-10 rounded-full bg-base-300">
                               {user.passportPhoto ? (
-                                <img 
-                                  src={user.passportPhoto.startsWith('http') ? user.passportPhoto : `${API_URL}/uploads/${user.passportPhoto}`} 
-                                  alt={user.fullName} 
-                                  className="object-cover w-full h-full rounded-full" 
+                                <img
+                                  src={user.passportPhoto.startsWith('http') ? user.passportPhoto : `${API_URL}/uploads/${user.passportPhoto}`}
+                                  alt={user.fullName}
+                                  className="object-cover w-full h-full rounded-full"
                                 />
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-primary/10 text-primary font-bold">
@@ -237,7 +255,7 @@ export default function AllUsersPage() {
                       </td>
                       <td>
                         <div className="badge badge-primary badge-outline badge-sm font-medium">
-                          {user.patak?.name || 'Unassigned'}
+                          {user.Pathak?.name || 'Unassigned'}
                         </div>
                       </td>
                       <td>
@@ -253,9 +271,9 @@ export default function AllUsersPage() {
                             {user.aadharNo || 'No Aadhar'}
                           </div>
                           {user.aadharImage && (
-                            <a 
-                              href={user.aadharImage.startsWith('http') ? user.aadharImage : `${API_URL}/uploads/${user.aadharImage}`} 
-                              target="_blank" 
+                            <a
+                              href={user.aadharImage.startsWith('http') ? user.aadharImage : `${API_URL}/uploads/${user.aadharImage}`}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="text-xs text-primary hover:underline flex items-center gap-1 w-max"
                             >
@@ -276,21 +294,21 @@ export default function AllUsersPage() {
                 <span className="text-sm text-base-content/60">
                   Showing <span className="font-medium text-base-content">{(page - 1) * limit + 1}</span> to <span className="font-medium text-base-content">{Math.min(page * limit, total)}</span> of <span className="font-medium text-base-content">{total}</span> results
                 </span>
-                
+
                 <div className="join">
-                  <button 
+                  <button
                     className="join-item btn btn-sm"
                     disabled={page === 1}
                     onClick={() => handlePageChange(page - 1)}
                   >
                     <HiOutlineChevronLeft className="w-4 h-4" />
                   </button>
-                  
+
                   <button className="join-item btn btn-sm pointer-events-none w-16">
                     {page} / {totalPages}
                   </button>
-                  
-                  <button 
+
+                  <button
                     className="join-item btn btn-sm"
                     disabled={page === totalPages}
                     onClick={() => handlePageChange(page + 1)}

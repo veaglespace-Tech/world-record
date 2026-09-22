@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useRegisterUserMutation, useGetPublicPataksQuery } from '../store/api/apiSlice';
+import { useRegisterUserMutation, useGetPublicPathaksQuery } from '../store/api/apiSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker,
@@ -11,7 +11,7 @@ import {
 export default function UserRegistrationPage() {
   const { referralCode } = useParams();
   const [registerUser, { isLoading }] = useRegisterUserMutation();
-  const { data: pataks = [], isLoading: isLoadingPataks } = useGetPublicPataksQuery();
+  const { data: pataks = [], isLoading: isLoadingPataks } = useGetPublicPathaksQuery();
 
   const [formData, setFormData] = useState({
     fullName: '',

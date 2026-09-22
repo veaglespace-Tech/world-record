@@ -1,170 +1,264 @@
 import { useState } from 'react';
-import { useGetPataksQuery, useCreatePatakMutation, useUpdatePatakMutation } from '../store/api/apiSlice';
+import { useGetPathaksQuery, useCreatePathakMutation, useUpdatePathakMutation } from '../store/api/apiSlice';
 import { useDebounce } from 'use-debounce';
 import {
-  HiOutlineOfficeBuilding,
-  HiOutlinePlus,
-  HiOutlinePencil,
-  HiOutlineRefresh,
-  HiOutlineSearch,
-  HiOutlineChevronLeft,
-  HiOutlineChevronRight,
+  HiOutlineOfficeBuilding, HiOutlinePlus, HiOutlinePencil,
+  HiOutlineRefresh, HiOutlineSearch, HiOutlineChevronLeft,
+  HiOutlineChevronRight, HiOutlineUser, HiOutlineMail,
+  HiOutlineLocationMarker, HiOutlinePhotograph, HiOutlineX,
 } from 'react-icons/hi';
 
-export default function AllPataksPage() {
+const EMPTY_FORM = {
+  name: '', description: '', adminName: '', adminEmail: '', address: '',
+};
+
+export default function AllPathaksPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 500);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const limit = 10;
 
-  const { data, isLoading, refetch, isFetching } = useGetPataksQuery({
-    page,
-    limit,
-    search: debouncedSearch,
+  const { data, isLoading, refetch, isFetching } = useGetPathaksQuery({
+    page, limit, search: debouncedSearch,
   });
 
-  const pataks = data?.data || [];
+  const Pathaks = data?.data || [];
   const total = data?.total || 0;
   const totalPages = data?.totalPages || 1;
 
-  const [createPatak, { isLoading: isCreating }] = useCreatePatakMutation();
-  const [updatePatak, { isLoading: isUpdating }] = useUpdatePatakMutation();
+  const [createPathak, { isLoading: isCreating }] = useCreatePathakMutation();
+  const [updatePathak, { isLoading: isUpdating }] = useUpdatePathakMutation();
 
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [formError, setFormError] = useState('');
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
+  /* ── helpers ── */
+  const handleChange = (e) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
   };
 
-  const openFormForAdd = () => {
+  const openAdd = () => {
     setEditingId(null);
-    setName('');
-    setDescription('');
+    setForm(EMPTY_FORM);
+    setLogoFile(null);
+    setLogoPreview(null);
+    setFormError('');
     setShowForm(true);
   };
 
-  const openFormForEdit = (patak) => {
-    setEditingId(patak.id);
-    setName(patak.name);
-    setDescription(patak.description || '');
+  const openEdit = (p) => {
+    setEditingId(p.id);
+    setForm({
+      name: p.name || '',
+      description: p.description || '',
+      adminName: p.adminName || '',
+      adminEmail: p.adminEmail || '',
+      address: p.address || '',
+    });
+    setLogoFile(null);
+    setLogoPreview(p.logoUrl || null);
+    setFormError('');
     setShowForm(true);
   };
 
   const closeForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setName('');
-    setDescription('');
+    setForm(EMPTY_FORM);
+    setLogoFile(null);
+    setLogoPreview(null);
+    setFormError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!form.name.trim()) return setFormError('Pathak Name is required.');
+    setFormError('');
+
+    const fd = new FormData();
+    fd.append('name', form.name.trim());
+    fd.append('description', form.description.trim());
+    fd.append('adminName', form.adminName.trim());
+    fd.append('adminEmail', form.adminEmail.trim());
+    fd.append('address', form.address.trim());
+    if (logoFile) fd.append('logo', logoFile);
 
     try {
       if (editingId) {
-        await updatePatak({
-          id: editingId,
-          data: { name: name.trim(), description: description.trim() || null }
-        }).unwrap();
+        await updatePathak({ id: editingId, formData: fd }).unwrap();
       } else {
-        await createPatak({ 
-          name: name.trim(), 
-          description: description.trim() || null 
-        }).unwrap();
+        await createPathak(fd).unwrap();
       }
       closeForm();
-    } catch (error) {
-      console.error('Failed to save patak:', error);
+    } catch (err) {
+      setFormError(err?.data?.error || 'Something went wrong. Please try again.');
     }
   };
 
+  /* ── UI ── */
   return (
     <div className="space-y-6">
+
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 premium-section !p-6">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center">
-              <HiOutlineOfficeBuilding className="w-5 h-5 text-success" />
-            </div>
-            All Pathaks
-          </h2>
-          <p className="text-base-content/60 mt-1 ml-13">
-            Showing {pataks.length} of {total} total organization{total !== 1 ? 's' : ''}
+          <div className="premium-section-title !mb-2">
+            <h2 className="premium-section-title-text flex items-center gap-3">
+              <HiOutlineOfficeBuilding className="w-6 h-6 text-primary" />
+              All Pataks
+            </h2>
+          </div>
+          <p className="text-base-content/60 ml-10 font-medium tracking-wide">
+            {total} organization{total !== 1 ? 's' : ''} total
           </p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={refetch} className="btn btn-info btn-sm text-white gap-2" disabled={isFetching}>
-            <HiOutlineRefresh className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+        <div className="flex gap-4">
+          <button onClick={refetch} className="px-6 py-3 rounded-xl bg-base-200/50 hover:bg-base-200 text-base-content font-bold shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
+            <HiOutlineRefresh className={`w-5 h-5 ${isFetching ? 'animate-spin text-primary' : 'text-base-content/50'}`} />
             Refresh
           </button>
-          <button
-            onClick={openFormForAdd}
-            className="btn btn-success btn-sm text-white gap-2"
-          >
-            <HiOutlinePlus className="w-4 h-4" />
+          <button onClick={openAdd} className="premium-btn !w-auto !py-3 !px-6">
+            <HiOutlinePlus className="w-5 h-5" />
             Add Patak
           </button>
         </div>
       </div>
 
-      {/* Form Card (Add/Edit) */}
+      {/* ── Add / Edit Form Modal ── */}
+      {/* ── Add / Edit Form Modal ── */}
       {showForm && (
-        <div className="card bg-base-100 border border-primary/20 shadow-sm">
-          <div className="card-body">
-            <h3 className="font-semibold mb-3">
-              {editingId ? 'Edit Pathak / Organization' : 'Add New Pathak / Organization'}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Name *</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered focus:input-primary"
-                  placeholder="Enter patak / organization name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-slate-100 overflow-hidden transform transition-all">
+
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="font-bold text-lg text-slate-800">
+                {editingId ? 'Edit Organization Details' : 'Add New Organization'}
+              </h3>
+              <button type="button" onClick={closeForm} className="p-2 hover:bg-slate-200 rounded-full text-slate-400 hover:text-slate-600 transition-colors">
+                <HiOutlineX className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSubmit}>
+              <div className="px-8 py-6 space-y-6 max-h-[70vh] overflow-y-auto">
+
+                {formError && (
+                  <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl border border-red-100">
+                    {formError}
+                  </div>
+                )}
+
+                {/* Logo Upload */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-slate-700">Organization Logo</label>
+                  <label className="cursor-pointer group w-fit">
+                    <input type="file" accept="image/*" className="sr-only" onChange={handleLogoChange} />
+                    {logoPreview ? (
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-blue-500 group-hover:border-blue-400 transition-all shadow-sm">
+                        <img src={logoPreview} alt="Logo" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">Change</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1.5 group-hover:border-blue-400 group-hover:bg-blue-50 transition-all">
+                        <HiOutlinePhotograph className="w-7 h-7 text-slate-400 group-hover:text-blue-500" />
+                        <span className="text-xs text-slate-500 group-hover:text-blue-600 font-medium">Upload Logo</span>
+                      </div>
+                    )}
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Pathak Name */}
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="premium-label">Organization Name <span className="text-red-500">*</span></label>
+                    <div className="premium-input-group">
+                      <HiOutlineOfficeBuilding className="premium-icon" />
+                      <input
+                        type="text" name="name" placeholder="e.g. Veagle Patak"
+                        className="premium-input"
+                        value={form.name} onChange={handleChange} required
+                      />
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="premium-label">Description</label>
+                    <div className="premium-input-group !items-start">
+                      <textarea
+                        name="description" rows={2} placeholder="Brief description (optional)"
+                        className="premium-input resize-none"
+                        value={form.description} onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Admin Name */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="premium-label">Admin Name</label>
+                    <div className="premium-input-group">
+                      <HiOutlineUser className="premium-icon" />
+                      <input
+                        type="text" name="adminName" placeholder="Admin full name"
+                        className="premium-input"
+                        value={form.adminName} onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Admin Email */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="premium-label">Admin Email</label>
+                    <div className="premium-input-group">
+                      <HiOutlineMail className="premium-icon" />
+                      <input
+                        type="email" name="adminEmail" placeholder="admin@example.com"
+                        className="premium-input"
+                        value={form.adminEmail} onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Address */}
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="premium-label">Address</label>
+                    <div className="premium-input-group">
+                      <HiOutlineLocationMarker className="premium-icon" />
+                      <input
+                        type="text" name="address" placeholder="Full address"
+                        className="premium-input"
+                        value={form.address} onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-medium">Description</span>
-                </label>
-                <textarea
-                  className="textarea textarea-bordered focus:textarea-primary"
-                  placeholder="Enter description (optional)"
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
-              </div>
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={closeForm}
-                >
+
+              {/* Modal Footer */}
+              <div className="flex gap-4 justify-end px-8 py-5 border-t border-base-200 bg-base-100/50 rounded-b-3xl">
+                <button type="button" className="px-6 py-3 font-semibold text-base-content/60 hover:text-base-content hover:bg-base-200 rounded-xl transition-colors" onClick={closeForm}>
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-success text-white btn-sm"
+                  className="premium-btn !w-auto !py-3 !px-8"
                   disabled={isCreating || isUpdating}
                 >
-                  {(isCreating || isUpdating) ? (
-                    <span className="loading loading-spinner loading-xs"></span>
-                  ) : (
-                    editingId ? 'Update Patak' : 'Save Patak'
-                  )}
+                  {isCreating || isUpdating ? <span className="loading loading-spinner loading-sm"></span> : (editingId ? 'Update Organization' : 'Save Organization')}
                 </button>
               </div>
             </form>
@@ -172,35 +266,28 @@ export default function AllPataksPage() {
         </div>
       )}
 
-      {/* Search Bar */}
-      <div className="form-control">
-        <label className="input input-bordered flex items-center gap-3 max-w-md focus-within:input-primary">
-          <HiOutlineSearch className="w-5 h-5 text-base-content/40" />
-          <input
-            type="text"
-            className="grow"
-            placeholder="Search pathaks..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </label>
-      </div>
+      {/* Search */}
+      <label className="input input-bordered flex items-center gap-3 max-w-md focus-within:input-primary">
+        <HiOutlineSearch className="w-5 h-5 text-base-content/40" />
+        <input
+          type="text" className="grow" placeholder="Search pathaks..."
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+        />
+      </label>
 
-      {/* Pataks List */}
-      <div className="card bg-base-100 border border-base-content/5 shadow-sm overflow-hidden flex flex-col">
+      {/* Table */}
+      <div className="card bg-base-100 border border-base-content/5 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center h-40">
-            <span className="loading loading-spinner loading-lg text-primary"></span>
+            <span className="loading loading-spinner loading-lg text-primary" />
           </div>
-        ) : pataks.length === 0 ? (
+        ) : Pathaks.length === 0 ? (
           <div className="text-center py-16 text-base-content/40">
             <HiOutlineOfficeBuilding className="w-12 h-12 mx-auto mb-3 opacity-40" />
             <p className="text-lg font-medium">No pathaks found</p>
             <p className="text-sm mt-1">
-              {debouncedSearch ? 'Try adjusting your search' : 'Click "Add Patak" to create one'}
+              {debouncedSearch ? 'Try adjusting your search' : 'Click "Add Pathak" to create one'}
             </p>
           </div>
         ) : (
@@ -208,34 +295,64 @@ export default function AllPataksPage() {
             <div className="overflow-x-auto">
               <table className="table table-zebra w-full">
                 <thead>
-                  <tr className="bg-base-200/50">
+                  <tr className="bg-base-200/50 text-xs uppercase tracking-wider">
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Created On</th>
+                    <th>Logo</th>
+                    <th>Pathak Name</th>
+                    <th>Admin</th>
+                    <th>Address</th>
+                    <th>Created</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pataks.map((patak, index) => (
-                    <tr key={patak.id} className="hover">
+                  {Pathaks.map((Pathak, index) => (
+                    <tr key={Pathak.id} className="hover">
                       <td className="font-mono text-base-content/50 text-sm">
                         {(page - 1) * limit + index + 1}
                       </td>
-                      <td className="font-medium">{patak.name}</td>
-                      <td className="text-base-content/70 max-w-xs truncate" title={patak.description}>
-                        {patak.description || '—'}
+                      <td>
+                        {Pathak.logoUrl ? (
+                          <div className="w-10 h-10 rounded-xl overflow-hidden border border-base-content/10">
+                            <img src={Pathak.logoUrl} alt={Pathak.name} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-xl bg-base-200 flex items-center justify-center text-base-content/30">
+                            <HiOutlineOfficeBuilding className="w-5 h-5" />
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <div className="font-semibold">{Pathak.name}</div>
+                        {Pathak.description && (
+                          <div className="text-xs text-base-content/50 max-w-[180px] truncate" title={Pathak.description}>
+                            {Pathak.description}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        {Pathak.adminName ? (
+                          <div>
+                            <div className="text-sm font-medium">{Pathak.adminName}</div>
+                            {Pathak.adminEmail && (
+                              <div className="text-xs text-base-content/50">{Pathak.adminEmail}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-base-content/30 text-sm">—</span>
+                        )}
+                      </td>
+                      <td className="text-sm text-base-content/60 max-w-[150px] truncate" title={Pathak.address}>
+                        {Pathak.address || '—'}
                       </td>
                       <td className="text-base-content/50 text-sm">
-                        {new Date(patak.createdAt).toLocaleDateString('en-IN', {
-                          day: '2-digit',
-                          month: 'short',
-                          year: 'numeric',
+                        {new Date(Pathak.createdAt).toLocaleDateString('en-IN', {
+                          day: '2-digit', month: 'short', year: 'numeric',
                         })}
                       </td>
                       <td>
                         <button
-                          onClick={() => openFormForEdit(patak)}
+                          onClick={() => openEdit(Pathak)}
                           className="btn btn-info btn-xs text-white"
                           title="Edit"
                         >
@@ -248,31 +365,20 @@ export default function AllPataksPage() {
               </table>
             </div>
 
-            {/* Pagination Controls */}
+            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-base-content/5 bg-base-100">
+              <div className="flex items-center justify-between p-4 border-t border-base-content/5">
                 <span className="text-sm text-base-content/60">
-                  Showing <span className="font-medium text-base-content">{(page - 1) * limit + 1}</span> to <span className="font-medium text-base-content">{Math.min(page * limit, total)}</span> of <span className="font-medium text-base-content">{total}</span> results
+                  Showing <strong>{(page - 1) * limit + 1}</strong>–<strong>{Math.min(page * limit, total)}</strong> of <strong>{total}</strong>
                 </span>
-                
                 <div className="join">
-                  <button 
-                    className="join-item btn btn-sm"
-                    disabled={page === 1}
-                    onClick={() => handlePageChange(page - 1)}
-                  >
+                  <button className="join-item btn btn-sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
                     <HiOutlineChevronLeft className="w-4 h-4" />
                   </button>
-                  
                   <button className="join-item btn btn-sm pointer-events-none w-16">
                     {page} / {totalPages}
                   </button>
-                  
-                  <button 
-                    className="join-item btn btn-sm"
-                    disabled={page === totalPages}
-                    onClick={() => handlePageChange(page + 1)}
-                  >
+                  <button className="join-item btn btn-sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
                     <HiOutlineChevronRight className="w-4 h-4" />
                   </button>
                 </div>

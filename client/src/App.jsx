@@ -12,6 +12,8 @@ import AllUsersPage from './pages/AllUsersPage';
 import AllPataksPage from './pages/AllPataksPage';
 import SettingsPage from './pages/SettingsPage';
 import UserRegistrationPage from './pages/UserRegistrationPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 function AppInit({ children }) {
   const dispatch = useDispatch();
@@ -47,6 +49,8 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/register/:referralCode" element={<UserRegistrationPage />} />
 
           {/* Protected Routes */}
