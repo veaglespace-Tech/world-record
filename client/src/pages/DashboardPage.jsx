@@ -15,53 +15,61 @@ function DashboardHome() {
   return (
     <div className="space-y-8">
       {/* Welcome Banner */}
-      <div className="premium-section bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
-        <h2 className="text-3xl font-bold">
-          Welcome back, <span className="text-primary">{admin?.name || 'Admin'}</span> 👋
-        </h2>
-        <p className="text-base-content/60 mt-2 font-medium tracking-wide">Here's what's happening with your platform today.</p>
+      <div className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+        <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
+            Welcome back, <span className="text-primary">{admin?.name || 'Admin'}</span> 👋
+          </h2>
+          <p className="text-sm text-base-content/50 mt-1">Here's what's happening with your platform today.</p>
+        </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="premium-section p-6 hover:-translate-y-1 transition-transform duration-300 group cursor-default">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold tracking-wider uppercase text-base-content/50">Total Users</p>
-              <p className="text-4xl font-extrabold mt-2 text-base-content/90">
-                {loading ? <span className="loading loading-spinner loading-sm"></span> : users.length}
-              </p>
-            </div>
-            <div className="w-14 h-14 rounded-2xl bg-info/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-info/20 transition-all duration-300 shadow-inner">
-              <HiOutlineUsers className="w-7 h-7 text-info" />
-            </div>
-          </div>
-        </div>
-
-        <div className="premium-section p-6 hover:-translate-y-1 transition-transform duration-300 group cursor-default">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold tracking-wider uppercase text-base-content/50">Total Pataks</p>
-              <p className="text-4xl font-extrabold mt-2 text-base-content/90">
-                {loading ? <span className="loading loading-spinner loading-sm"></span> : Pathaks.length}
-              </p>
-            </div>
-            <div className="w-14 h-14 rounded-2xl bg-success/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-success/20 transition-all duration-300 shadow-inner">
-              <HiOutlineOfficeBuilding className="w-7 h-7 text-success" />
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-base-content/50 font-medium">Total Users</p>
+                <p className="text-3xl font-bold mt-1">
+                  {loading ? <span className="loading loading-spinner loading-sm"></span> : users.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-info/10 flex items-center justify-center">
+                <HiOutlineUsers className="w-6 h-6 text-info" />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="premium-section p-6 hover:-translate-y-1 transition-transform duration-300 group cursor-default">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-bold tracking-wider uppercase text-base-content/50">Your Referral Code</p>
-              <p className="text-xl font-extrabold mt-3 text-base-content/90 bg-base-200/50 px-3 py-1.5 rounded-lg inline-block border border-base-content/10">
-                {admin?.referralCode || '—'}
-              </p>
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-base-content/50 font-medium">Total Pataks</p>
+                <p className="text-3xl font-bold mt-1">
+                  {loading ? <span className="loading loading-spinner loading-sm"></span> : Pathaks.length}
+                </p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
+                <HiOutlineOfficeBuilding className="w-6 h-6 text-success" />
+              </div>
             </div>
-            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/20 transition-all duration-300 shadow-inner">
-              <HiOutlineLink className="w-7 h-7 text-primary" />
+          </div>
+        </div>
+
+        <div className="card bg-base-100 shadow-sm border border-base-content/5 hover:shadow-md transition-shadow">
+          <div className="card-body">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-base-content/50 font-medium">Referral Code</p>
+                <p className="text-xl font-bold mt-2 font-mono bg-base-200 px-3 py-1 rounded-lg inline-block">
+                  {admin?.referralCode || '—'}
+                </p>
+              </div>
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <HiOutlineLink className="w-6 h-6 text-primary" />
+              </div>
             </div>
           </div>
         </div>

@@ -110,24 +110,24 @@ export default function AllPathaksPage() {
     <div className="space-y-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4 premium-section !p-6">
+      <div className="flex items-center justify-between flex-wrap gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-6">
         <div>
-          <div className="premium-section-title !mb-2">
-            <h2 className="premium-section-title-text flex items-center gap-3">
+          <div className="mb-1">
+            <h2 className="text-2xl font-bold flex items-center gap-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               <HiOutlineOfficeBuilding className="w-6 h-6 text-primary" />
               All Pataks
             </h2>
           </div>
-          <p className="text-base-content/60 ml-10 font-medium tracking-wide">
+          <p className="text-sm text-base-content/50 ml-10">
             {total} organization{total !== 1 ? 's' : ''} total
           </p>
         </div>
         <div className="flex gap-4">
-          <button onClick={refetch} className="px-6 py-3 rounded-xl bg-base-200/50 hover:bg-base-200 text-base-content font-bold shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
+          <button onClick={refetch} className="btn btn-ghost border border-base-content/10 shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
             <HiOutlineRefresh className={`w-5 h-5 ${isFetching ? 'animate-spin text-primary' : 'text-base-content/50'}`} />
             Refresh
           </button>
-          <button onClick={openAdd} className="premium-btn !w-auto !py-3 !px-6">
+          <button onClick={openAdd} className="btn btn-primary text-primary-content shadow-md shadow-primary/20">
             <HiOutlinePlus className="w-5 h-5" />
             Add Patak
           </button>
@@ -183,79 +183,89 @@ export default function AllPathaksPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Pathak Name */}
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="premium-label">Organization Name <span className="text-red-500">*</span></label>
-                    <div className="premium-input-group">
-                      <HiOutlineOfficeBuilding className="premium-icon" />
+                  <div className="form-control md:col-span-2">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Organization Name *</span>
+                    </label>
+                    <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+                      <HiOutlineOfficeBuilding className="w-5 h-5 text-base-content/40" />
                       <input
                         type="text" name="name" placeholder="e.g. Veagle Patak"
-                        className="premium-input"
+                        className="grow bg-transparent outline-none"
                         value={form.name} onChange={handleChange} required
                       />
-                    </div>
+                    </label>
                   </div>
 
                   {/* Description */}
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="premium-label">Description</label>
-                    <div className="premium-input-group !items-start">
+                  <div className="form-control md:col-span-2">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Description</span>
+                    </label>
+                    <label className="input input-bordered flex items-start gap-3 h-auto py-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
                       <textarea
                         name="description" rows={2} placeholder="Brief description (optional)"
-                        className="premium-input resize-none"
+                        className="grow bg-transparent outline-none resize-none"
                         value={form.description} onChange={handleChange}
                       />
-                    </div>
+                    </label>
                   </div>
 
                   {/* Admin Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="premium-label">Admin Name</label>
-                    <div className="premium-input-group">
-                      <HiOutlineUser className="premium-icon" />
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Admin Name</span>
+                    </label>
+                    <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+                      <HiOutlineUser className="w-5 h-5 text-base-content/40" />
                       <input
                         type="text" name="adminName" placeholder="Admin full name"
-                        className="premium-input"
+                        className="grow bg-transparent outline-none"
                         value={form.adminName} onChange={handleChange}
                       />
-                    </div>
+                    </label>
                   </div>
 
                   {/* Admin Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="premium-label">Admin Email</label>
-                    <div className="premium-input-group">
-                      <HiOutlineMail className="premium-icon" />
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Admin Email</span>
+                    </label>
+                    <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+                      <HiOutlineMail className="w-5 h-5 text-base-content/40" />
                       <input
                         type="email" name="adminEmail" placeholder="admin@example.com"
-                        className="premium-input"
+                        className="grow bg-transparent outline-none"
                         value={form.adminEmail} onChange={handleChange}
                       />
-                    </div>
+                    </label>
                   </div>
 
                   {/* Address */}
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="premium-label">Address</label>
-                    <div className="premium-input-group">
-                      <HiOutlineLocationMarker className="premium-icon" />
+                  <div className="form-control md:col-span-2">
+                    <label className="label py-1">
+                      <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Address</span>
+                    </label>
+                    <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+                      <HiOutlineLocationMarker className="w-5 h-5 text-base-content/40" />
                       <input
                         type="text" name="address" placeholder="Full address"
-                        className="premium-input"
+                        className="grow bg-transparent outline-none"
                         value={form.address} onChange={handleChange}
                       />
-                    </div>
+                    </label>
                   </div>
                 </div>
               </div>
 
               {/* Modal Footer */}
               <div className="flex gap-4 justify-end px-8 py-5 border-t border-base-200 bg-base-100/50 rounded-b-3xl">
-                <button type="button" className="px-6 py-3 font-semibold text-base-content/60 hover:text-base-content hover:bg-base-200 rounded-xl transition-colors" onClick={closeForm}>
+                <button type="button" className="btn btn-ghost" onClick={closeForm}>
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="premium-btn !w-auto !py-3 !px-8"
+                  className="btn btn-primary text-primary-content shadow-md shadow-primary/20"
                   disabled={isCreating || isUpdating}
                 >
                   {isCreating || isUpdating ? <span className="loading loading-spinner loading-sm"></span> : (editingId ? 'Update Organization' : 'Save Organization')}

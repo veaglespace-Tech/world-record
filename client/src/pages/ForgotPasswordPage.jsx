@@ -38,8 +38,8 @@ export default function ForgotPasswordPage() {
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-secondary/10 rounded-full blur-[100px]"></div>
       </div>
 
-      <div className="premium-section w-full max-w-md mx-auto z-10">
-        <div className="p-2">
+      <div className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5 w-full max-w-md mx-auto z-10">
+        <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
           
           <Link to="/login" className="inline-flex items-center gap-2 text-sm text-base-content/50 hover:text-primary transition-colors mb-4 w-fit">
             <HiOutlineArrowLeft className="w-4 h-4" />
@@ -66,14 +66,14 @@ export default function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-control">
-              <label className="label">
-                <span className="premium-label">Email Address</span>
+              <label className="label py-1">
+                <span className="label-text text-xs font-semibold uppercase tracking-wider text-base-content/70">Email Address</span>
               </label>
-              <label className="premium-input-group">
-                <HiOutlineMail className="premium-icon" />
+              <label className="input input-bordered w-full flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                <HiOutlineMail className="w-5 h-5 text-base-content/40" />
                 <input
                   type="email"
-                  className="premium-input"
+                  className="grow"
                   placeholder="admin@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

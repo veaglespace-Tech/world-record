@@ -126,21 +126,21 @@ export default function AllUsersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4 premium-section !p-6">
+      <div className="flex items-center justify-between flex-wrap gap-4 card bg-base-100 shadow-sm border border-base-content/5 p-6">
         <div>
-          <div className="premium-section-title !mb-2">
-            <h2 className="premium-section-title-text flex items-center gap-3">
+          <div className="mb-1">
+            <h2 className="text-2xl font-bold flex items-center gap-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               <HiOutlineUsers className="w-6 h-6 text-primary" />
               All Users
             </h2>
           </div>
-          <p className="text-base-content/60 ml-10 font-medium tracking-wide">
+          <p className="text-sm text-base-content/50 ml-10">
             Showing {users.length} of {total} total user{total !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex gap-4">
           <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="premium-btn !w-auto !py-3 !px-6 cursor-pointer">
+            <label tabIndex={0} className="btn btn-primary text-primary-content shadow-md shadow-primary/20 cursor-pointer gap-2">
               <HiOutlineDownload className="w-5 h-5" />
               Export Data
             </label>
@@ -149,7 +149,7 @@ export default function AllUsersPage() {
               <li><button onClick={exportToPDF}><HiOutlineDocumentText className="w-4 h-4 text-error" /> PDF (.pdf)</button></li>
             </ul>
           </div>
-          <button onClick={refetch} className="px-6 py-3 rounded-xl bg-base-200/50 hover:bg-base-200 text-base-content font-bold shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
+          <button onClick={refetch} className="btn btn-ghost border border-base-content/10 shadow-sm transition-all flex items-center justify-center gap-2" disabled={isFetching}>
             <HiOutlineRefresh className={`w-5 h-5 ${isFetching ? 'animate-spin text-primary' : 'text-base-content/50'}`} />
             Refresh
           </button>
@@ -158,12 +158,12 @@ export default function AllUsersPage() {
 
       {/* Filters & Search */}
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <div className="premium-input-group">
-            <HiOutlineSearch className="premium-icon" />
+        <div className="form-control flex-1">
+          <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 w-full">
+            <HiOutlineSearch className="w-5 h-5 text-base-content/40" />
             <input
               type="text"
-              className="premium-input"
+              className="grow bg-transparent outline-none"
               placeholder="Search by name, email, or phone..."
               value={search}
               onChange={(e) => {
@@ -171,12 +171,12 @@ export default function AllUsersPage() {
                 setPage(1); // Reset page on search
               }}
             />
-          </div>
+          </label>
         </div>
 
         <div className="w-full sm:w-auto min-w-[200px]">
           <select
-            className="premium-input-group !bg-base-200/40 text-base-content/70 cursor-pointer w-full"
+            className="select select-bordered bg-base-200/40 text-base-content/70 cursor-pointer w-full"
             value={filter}
             onChange={(e) => {
               setFilter(e.target.value);
