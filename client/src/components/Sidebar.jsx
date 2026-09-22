@@ -22,6 +22,11 @@ export default function Sidebar() {
     navigate('/login');
   };
 
+  const closeDrawer = () => {
+    const drawer = document.getElementById('dashboard-drawer');
+    if (drawer) drawer.checked = false;
+  };
+
   const navItems = [
     { to: '/dashboard', icon: HiOutlineHome, label: 'Dashboard' },
     { to: '/dashboard/referral', icon: HiOutlineLink, label: 'My Referral Link' },
@@ -31,22 +36,26 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-72 min-h-screen bg-base-300 flex flex-col border-r border-base-content/10">
+    <div className="w-72 h-full bg-base-300 flex flex-col border-r border-base-content/10">
       {/* Brand */}
       <div className="p-6 border-b border-base-content/10">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-          🌍 World Record
+        <h1 className="text-xl font-bold flex items-center gap-2">
+          <span>🌍</span>
+          <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent leading-tight">
+            Guinness World Records
+          </span>
         </h1>
         <p className="text-xs text-base-content/50 mt-1">Admin Dashboard</p>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.to === '/dashboard'}
+            onClick={closeDrawer}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive

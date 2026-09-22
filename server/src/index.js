@@ -30,7 +30,7 @@ app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'World Record API is running' });
+  res.json({ status: 'ok', message: 'Guinness World Records API is running' });
 });
 
 // Error handling middleware

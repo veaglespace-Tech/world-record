@@ -6,7 +6,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 const multer = require('multer');
-const ImageKit = require('@imagekit/nodejs');
+const ImageKit = require('imagekit');
 const path = require('path');
 
 // ImageKit configuration

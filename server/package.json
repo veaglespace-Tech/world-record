@@ -1,7 +1,7 @@
 {
   "name": "world-record-server",
   "version": "1.0.0",
-  "description": "World Record Admin Dashboard API",
+  "description": "Guinness World Records Admin Dashboard API",
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",

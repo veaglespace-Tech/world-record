@@ -250,7 +250,7 @@ export default function AllPataksPage() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 border-t border-base-content/5 bg-base-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-t border-base-content/5 bg-base-100">
                 <span className="text-sm text-base-content/60">
                   Showing <span className="font-medium text-base-content">{(page - 1) * limit + 1}</span> to <span className="font-medium text-base-content">{Math.min(page * limit, total)}</span> of <span className="font-medium text-base-content">{total}</span> results
                 </span>

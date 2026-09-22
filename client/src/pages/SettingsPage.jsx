@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectCurrentUser, setCredentials, selectCurrentToken } from '../store/slices/authSlice';
 import { useUpdateSettingsMutation } from '../store/api/apiSlice';
-import { HiOutlineCog, HiOutlineUser, HiOutlineLockClosed } from 'react-icons/hi';
+import { HiOutlineCog, HiOutlineUser, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 
 export default function SettingsPage() {
   const admin = useSelector(selectCurrentUser);
@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPasswords, setShowPasswords] = useState({ current: false, new: false, confirm: false });
   const [message, setMessage] = useState({ type: '', text: '' });
 
   const handleSubmit = async (e) => {
@@ -125,37 +126,64 @@ export default function SettingsPage() {
                 <label className="label">
                   <span className="label-text font-medium">Current Password</span>
                 </label>
-                <input
-                  type="password"
-                  className="input input-bordered focus:input-primary"
-                  placeholder="Enter current password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                  <input
+                    type={showPasswords.current ? "text" : "password"}
+                    className="grow pr-10"
+                    placeholder="Enter current password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords(p => ({ ...p, current: !p.current }))}
+                    className="absolute right-3 text-base-content/40 hover:text-base-content transition-colors"
+                  >
+                    {showPasswords.current ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                  </button>
+                </label>
               </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-medium">New Password</span>
                 </label>
-                <input
-                  type="password"
-                  className="input input-bordered focus:input-primary"
-                  placeholder="Enter new password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                  <input
+                    type={showPasswords.new ? "text" : "password"}
+                    className="grow pr-10"
+                    placeholder="Enter new password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords(p => ({ ...p, new: !p.new }))}
+                    className="absolute right-3 text-base-content/40 hover:text-base-content transition-colors"
+                  >
+                    {showPasswords.new ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                  </button>
+                </label>
               </div>
               <div className="form-control">
                 <label className="label">
                   <span className="label-text font-medium">Confirm New Password</span>
                 </label>
-                <input
-                  type="password"
-                  className="input input-bordered focus:input-primary"
-                  placeholder="Re-enter new password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <label className="input input-bordered flex items-center gap-3 focus-within:input-primary focus-within:ring-2 focus-within:ring-primary/20 shadow-sm transition-all bg-base-100 border-base-content/20 relative">
+                  <input
+                    type={showPasswords.confirm ? "text" : "password"}
+                    className="grow pr-10"
+                    placeholder="Re-enter new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswords(p => ({ ...p, confirm: !p.confirm }))}
+                    className="absolute right-3 text-base-content/40 hover:text-base-content transition-colors"
+                  >
+                    {showPasswords.confirm ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                  </button>
+                </label>
               </div>
             </div>
           </div>
