@@ -53,7 +53,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-base-300 via-base-200 to-base-300 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
       {/* Background decoration with Dhol Players */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <img 
@@ -69,8 +69,9 @@ export default function LoginPage() {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-4 py-8 relative z-10 w-full">
-        <div className="card w-full max-w-md bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5">
-          <div className="card-body px-6 pt-6 pb-5 sm:px-8 sm:pt-8 sm:pb-6">
+        <div className="w-full max-w-md bg-white/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/60 rounded-3xl overflow-hidden relative">
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div className="px-6 pt-10 pb-8 sm:px-10 sm:pt-12 sm:pb-10 relative z-10">
           {/* Logo & Title */}
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary mb-4 shadow-lg shadow-primary/25">
@@ -178,7 +179,7 @@ export default function LoginPage() {
               {isLoading ? (
                 <span className="loading loading-spinner loading-sm"></span>
               ) : (
-                'Sign In'
+                'Secure Sign In'
               )}
             </button>
           </form>

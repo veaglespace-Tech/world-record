@@ -77,7 +77,7 @@ export default function UserRegistrationPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-base-300 via-base-200 to-base-300 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
       {/* Background decoration with Dhol Players */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <img 
@@ -103,11 +103,13 @@ export default function UserRegistrationPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="card bg-base-100/95 backdrop-blur-md shadow-2xl border border-base-content/5"
+              className="w-full bg-white/70 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white/60 rounded-3xl overflow-hidden relative"
             >
-              <div className="card-body px-6 pt-6 pb-6 md:px-8 md:pt-8 md:pb-8">
+              <div className="absolute top-0 left-0 -ml-32 -mt-32 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="absolute bottom-0 right-0 -mr-32 -mb-32 w-64 h-64 bg-secondary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="px-6 pt-10 pb-8 md:px-10 md:pt-12 md:pb-10 relative z-10">
                 {/* Header inside card */}
-                <div className="text-center mb-6">
+                <div className="text-center mb-8">
                   <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
                     Pathak Member Registration
                   </h2>

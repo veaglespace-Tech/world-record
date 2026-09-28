@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGetPathakListQuery, useCreatePathakMutation, useUpdatePathakMutation } from '../store/api/apiSlice';
 import { useDebounce } from 'use-debounce';
+import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -22,9 +23,15 @@ export default function AllPathakPage() {
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  const { data, isLoading, refetch, isFetching } = useGetPathakListQuery({
+  const { data, isLoading, refetch, isFetching, isError, error } = useGetPathakListQuery({
     page, limit, search: debouncedSearch,
   });
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.data?.error || 'Failed to load Pathak data.');
+    }
+  }, [isError, error]);
 
   const pathakList = data?.data || [];
   const total = data?.total || 0;
@@ -100,12 +107,16 @@ export default function AllPathakPage() {
     try {
       if (editingId) {
         await updatePathak({ id: editingId, formData: fd }).unwrap();
+        toast.success('Organization updated successfully!');
       } else {
         await createPathak(fd).unwrap();
+        toast.success('Organization created successfully!');
       }
       closeForm();
     } catch (err) {
-      setFormError(err?.data?.error || 'Something went wrong. Please try again.');
+      const errorMsg = err?.data?.error || 'Something went wrong. Please try again.';
+      setFormError(errorMsg);
+      toast.error(errorMsg);
     }
   };
 
@@ -180,9 +191,9 @@ export default function AllPathakPage() {
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
           <div className="dropdown dropdown-end">
-            <label tabIndex={0} className="btn btn-success text-white btn-sm gap-2">
-              <HiOutlineDownload className="w-4 h-4" />
-              Export
+            <label tabIndex={0} className="btn btn-primary text-primary-content shadow-md shadow-primary/20 cursor-pointer gap-2">
+              <HiOutlineDownload className="w-5 h-5" />
+              Export Data
             </label>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-2 border border-base-content/10">
               <li><button onClick={exportToExcel}><HiOutlineDocumentText className="w-4 h-4" /> Excel (.xlsx)</button></li>

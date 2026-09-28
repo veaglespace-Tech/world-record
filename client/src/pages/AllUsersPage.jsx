@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useGetUsersQuery } from '../store/api/apiSlice';
 import { useDebounce } from 'use-debounce';
+import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -26,12 +27,18 @@ export default function AllUsersPage() {
   const [limit, setLimit] = useState(10);
   const [filter, setFilter] = useState('');
 
-  const { data, isLoading, refetch, isFetching } = useGetUsersQuery({
+  const { data, isLoading, refetch, isFetching, isError, error } = useGetUsersQuery({
     page,
     limit,
     search: debouncedSearch,
     filter,
   });
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.data?.error || 'Failed to load user data.');
+    }
+  }, [isError, error]);
 
   const users = data?.data || [];
   const total = data?.total || 0;
@@ -54,10 +61,14 @@ export default function AllUsersPage() {
           'Authorization': `Bearer ${token}`
         }
       });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
       const data = await response.json();
       return data.data || [];
     } catch (error) {
       console.error("Failed to fetch all users for export", error);
+      toast.error('Error fetching data for export. Please try again.');
       return [];
     }
   };
@@ -74,7 +85,7 @@ export default function AllUsersPage() {
 
     // Group users by Pathak
     const usersByPathak = allUsers.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || user.Pathak?.name || 'Unassigned';
+      const PathakName = user.Pathak?.name || 'Unassigned';
       if (!acc[PathakName]) {
         acc[PathakName] = [];
       }
@@ -136,7 +147,7 @@ export default function AllUsersPage() {
     const tableColumn = ["S.No", "Full Name", "Email", "Phone", "DOB", "Gender", "Passport", "Aadhar", "Registered"];
     // Group users by Pathak for PDF
     const usersByPathak = allUsers.reduce((acc, user) => {
-      const PathakName = user.Pathak?.name || user.patak?.name || 'Unassigned';
+      const PathakName = user.Pathak?.name || 'Unassigned';
       if (!acc[PathakName]) acc[PathakName] = [];
       acc[PathakName].push(user);
       return acc;

@@ -18,7 +18,14 @@ const imagekit = new ImageKit({
 
 // Multer memory storage configuration
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image/')) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files are allowed!'), false);
+  }
+};
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 // POST /api/users/register — Public route (via referral link)
 router.post(
@@ -48,6 +55,17 @@ router.post(
         });
       }
 
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Invalid email format.' });
+      }
+
+      const parsedPathakId = parseInt(pathakId);
+      if (isNaN(parsedPathakId)) {
+        return res.status(400).json({ error: 'Invalid pathak ID.' });
+      }
+
       // Verify referral code belongs to an admin
       const admin = await prisma.admin.findUnique({
         where: { referralCode },
@@ -62,18 +80,23 @@ router.post(
       }
 
       // Upload files to ImageKit
-      const aadharUpload = await imagekit.upload({
-        file: req.files['aadharImage'][0].buffer, // Pass buffer
-        fileName: `aadhar-${Date.now()}-${req.files['aadharImage'][0].originalname}`,
-      });
+      let aadharImage, passportPhoto;
+      try {
+        const aadharUpload = await imagekit.upload({
+          file: req.files['aadharImage'][0].buffer, // Pass buffer
+          fileName: `aadhar-${Date.now()}-${req.files['aadharImage'][0].originalname}`,
+        });
 
-      const passportUpload = await imagekit.upload({
-        file: req.files['passportPhoto'][0].buffer,
-        fileName: `passport-${Date.now()}-${req.files['passportPhoto'][0].originalname}`,
-      });
+        const passportUpload = await imagekit.upload({
+          file: req.files['passportPhoto'][0].buffer,
+          fileName: `passport-${Date.now()}-${req.files['passportPhoto'][0].originalname}`,
+        });
 
-      const aadharImage = aadharUpload.url;
-      const passportPhoto = passportUpload.url;
+        aadharImage = aadharUpload.url;
+        passportPhoto = passportUpload.url;
+      } catch (uploadError) {
+        return res.status(500).json({ error: 'Failed to upload images. Please check the files and try again.' });
+      }
 
       const user = await prisma.user.create({
         data: {
@@ -81,7 +104,7 @@ router.post(
           email,
           phone,
           address: address || null,
-          PathakId: parseInt(pathakId),
+          PathakId: parsedPathakId,
           dob,
           gender,
           bloodGroup,
@@ -104,8 +127,15 @@ router.post(
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '', filter = '' } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const take = parseInt(limit);
+    
+    let parsedPage = parseInt(page);
+    let parsedLimit = parseInt(limit);
+    
+    if (isNaN(parsedPage) || parsedPage < 1) parsedPage = 1;
+    if (isNaN(parsedLimit) || parsedLimit < 1) parsedLimit = 10;
+
+    const skip = (parsedPage - 1) * parsedLimit;
+    const take = parsedLimit;
 
     const where = {};
     const orConditions = [];
@@ -142,8 +172,8 @@ router.get('/', authMiddleware, async (req, res) => {
     res.json({
       data: users,
       total,
-      page: parseInt(page),
-      limit: parseInt(limit),
+      page: parsedPage,
+      limit: parsedLimit,
       totalPages: Math.ceil(total / take),
     });
   } catch (error) {

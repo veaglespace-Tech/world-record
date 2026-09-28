@@ -20,7 +20,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // GET /api/pathak/public — Public route (for registration dropdown)
 router.get('/public', async (req, res) => {
   try {
-    const pathakList = await prisma.Pathak.findMany({
+    const pathakList = await prisma.pathak.findMany({
       select: { id: true, name: true },
       orderBy: { id: 'asc' },
     });
@@ -51,7 +51,7 @@ router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
       logoUrl = uploaded.url;
     }
 
-    const pathakData = await prisma.Pathak.create({
+    const pathakData = await prisma.pathak.create({
       data: {
         name,
         description: description || null,
@@ -65,6 +65,7 @@ router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
     res.status(201).json(pathakData);
   } catch (error) {
     console.error('Create Pathak error:', error);
+    require('fs').appendFileSync('error.log', (error.stack || error.toString()) + '\n');
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
@@ -73,8 +74,14 @@ router.post('/', authMiddleware, upload.single('logo'), async (req, res) => {
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '' } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const take = parseInt(limit);
+    
+    let parsedPage = parseInt(page);
+    let parsedLimit = parseInt(limit);
+    if (isNaN(parsedPage) || parsedPage < 1) parsedPage = 1;
+    if (isNaN(parsedLimit) || parsedLimit < 1) parsedLimit = 10;
+
+    const skip = (parsedPage - 1) * parsedLimit;
+    const take = parsedLimit;
 
     const where = search
       ? {
@@ -89,20 +96,25 @@ router.get('/', authMiddleware, async (req, res) => {
       : {};
 
     const [pathakList, total] = await Promise.all([
-      prisma.Pathak.findMany({
+      prisma.pathak.findMany({
         where,
         skip,
         take,
         orderBy: { id: 'asc' },
+        include: {
+          _count: {
+            select: { users: true }
+          }
+        }
       }),
-      prisma.Pathak.count({ where }),
+      prisma.pathak.count({ where }),
     ]);
 
     res.json({
       data: pathakList,
       total,
-      page: parseInt(page),
-      limit: parseInt(limit),
+      page: parsedPage,
+      limit: parsedLimit,
       totalPages: Math.ceil(total / take),
     });
   } catch (error) {
@@ -119,6 +131,11 @@ router.put('/:id', authMiddleware, upload.single('logo'), async (req, res) => {
 
     if (!name) {
       return res.status(400).json({ error: 'Pathak name is required.' });
+    }
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId)) {
+      return res.status(400).json({ error: 'Invalid pathak ID.' });
     }
 
     const updateData = {
@@ -138,8 +155,8 @@ router.put('/:id', authMiddleware, upload.single('logo'), async (req, res) => {
       updateData.logoUrl = uploaded.url;
     }
 
-    const pathakData = await prisma.Pathak.update({
-      where: { id: parseInt(id) },
+    const pathakData = await prisma.pathak.update({
+      where: { id: parsedId },
       data: updateData,
     });
 

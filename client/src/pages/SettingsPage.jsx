@@ -47,11 +47,11 @@ export default function SettingsPage() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setMessage({ type: 'success', text: 'Settings updated successfully!' });
+      setMessage({ type: 'success', text: 'Admin profile updated successfully!' });
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.data?.error || 'Failed to update settings.',
+        text: error.data?.error || 'Failed to update profile.',
       });
     }
   };
@@ -67,10 +67,10 @@ export default function SettingsPage() {
             </div>
             <div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">
-                Settings
+                Admin Profile
               </h2>
               <p className="text-sm text-base-content/50">
-                Manage your profile and security settings.
+                Manage your admin profile and security.
               </p>
             </div>
           </div>

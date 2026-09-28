@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useDispatch, useSelector } from 'react-redux';
 import { useLazyGetMeQuery } from './store/api/apiSlice';
 import { setCredentials, selectCurrentToken } from './store/slices/authSlice';
+import { Toaster } from 'react-hot-toast';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
@@ -45,6 +46,7 @@ function AppInit({ children }) {
 function App() {
   return (
     <Router>
+      <Toaster position="top-right" />
       <AppInit>
         <Routes>
           {/* Public Routes */}
