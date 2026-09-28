@@ -77,7 +77,7 @@ export default function LoginPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary mb-4 shadow-lg shadow-primary/25">
               <HiOutlineGlobe className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent truncate pb-1">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1 leading-tight">
               Guinness Book of World Record
             </h1>
             <p className="text-base-content/50 text-sm mt-2">Admin Portal — Sign in to continue</p>
